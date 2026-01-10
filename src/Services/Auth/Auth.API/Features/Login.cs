@@ -28,17 +28,17 @@ public sealed class Login
         string AvatarPath
     );
 
-    public sealed record Request(string Username, string Password) : IRequest<Result<Response>>;
+    public sealed record Request(string Email, string Password) : IRequest<Result<Response>>;
 
     public sealed class Validator : AbstractValidator<Request>
     {
         public Validator()
         {
-            RuleFor(r => r.Username)
+            RuleFor(r => r.Email)
                 .NotEmpty()
-                .WithMessage("Username is required.")
+                .WithMessage("Email is required.")
                 .MaximumLength(50)
-                .WithMessage("Username must not exceed 50 characters.");
+                .WithMessage("Email must not exceed 50 characters.");
 
             RuleFor(r => r.Password)
                 .NotEmpty()
@@ -62,11 +62,11 @@ public sealed class Login
             CancellationToken cancellationToken
         )
         {
-            var user = await userManager.FindByNameAsync(request.Username);
+            var user = await userManager.FindByEmailAsync(request.Email);
 
             if (user is null || !await userManager.CheckPasswordAsync(user, request.Password))
             {
-                return new UnauthorizedError("Invalid username or password.");
+                return new UnauthorizedError("Invalid email or password.");
             }
 
             var roles = await userManager.GetRolesAsync(user);
