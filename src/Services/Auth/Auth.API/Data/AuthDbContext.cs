@@ -1,4 +1,5 @@
-﻿using Auth.API.Models;
+﻿using Auth.API.Data.Seeding;
+using Auth.API.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,6 @@ public class AuthDbContext(DbContextOptions<AuthDbContext> options)
 
         builder.Entity<RefreshToken>(entity =>
         {
-            entity.ToTable("RefreshTokens");
             entity.HasKey(rt => rt.Id);
             entity.Property(rt => rt.Token).IsRequired().HasMaxLength(200);
 
@@ -25,6 +25,8 @@ public class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 .WithMany(u => u.RefreshTokens)
                 .HasForeignKey(rt => rt.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.SeedRolesAndAdminAsync();
         });
     }
 }
