@@ -7,6 +7,7 @@ namespace Core.Domain.Errors;
 public class ValidationError : DomainError
 {
     public override string Code => "validation_error";
+    public override string Message => "One or more validation errors occurred.";
     public Dictionary<string, string[]> ValidationErrors { get; set; }
 
     public ValidationError(List<FluentValidation.Results.ValidationFailure> validationFailures)

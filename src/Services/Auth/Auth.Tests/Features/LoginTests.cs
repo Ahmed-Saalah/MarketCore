@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
-namespace Auth.API.Tests.Features;
+namespace Auth.Tests.Features;
 
 public class LoginTests
 {
@@ -80,7 +80,7 @@ public class LoginTests
             .ReturnsAsync(new List<string> { Roles.Customer });
 
         var expectedAccessToken = "access-token-abc";
-        var expectedRefreshToken = new RefreshToken { Token = "refresh-token-xyz" };
+        var expectedRefreshToken = new API.Models.RefreshToken { Token = "refresh-token-xyz" };
 
         _tokenServiceMock
             .Setup(x => x.GenerateAccessToken(user, It.IsAny<IList<string>>()))
@@ -119,7 +119,7 @@ public class LoginTests
 
         // Assert
         result.Error.Should().BeOfType<UnauthorizedError>();
-        result.Error.Code.Should().Be("unauthorized");
+        result.Error.Message.Should().Be("Invalid email or password.");
     }
 
     [Fact]

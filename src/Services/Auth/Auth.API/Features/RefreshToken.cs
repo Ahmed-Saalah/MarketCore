@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Auth.API.Features;
 
-public sealed class RefreshTokenFeature
+public sealed class RefreshToken
 {
     public sealed record Response(string AccessToken, string RefreshToken);
 

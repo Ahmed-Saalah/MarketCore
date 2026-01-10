@@ -6,6 +6,8 @@ public class CustomIdentityError : IdentityError, IDomainError
 {
     public string DescriptionKey { get; set; }
 
+    public string Message { get; set; }
+
     public async Task<ApplicationError> ToApplicationError() =>
         new ApplicationError(this.Code, this.Description);
 }

@@ -9,6 +9,8 @@ public class MultipleError : DomainError
 
     public IEnumerable<IDomainError> Errors { get; }
 
+    public override string Message { get; }
+
     public MultipleError(IEnumerable<IDomainError> errors)
     {
         Errors = errors;

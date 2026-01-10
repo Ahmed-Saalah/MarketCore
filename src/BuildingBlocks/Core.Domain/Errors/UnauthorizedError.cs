@@ -7,5 +7,5 @@ public class UnauthorizedError(string message = "Unauthorized") : DomainError
 {
     public override string Code => "unauthorized";
 
-    public string Message => message;
+    public override string Message => message;
 }

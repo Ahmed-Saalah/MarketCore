@@ -7,5 +7,5 @@ public class BadRequestError(string message = "Bad request") : DomainError
 {
     public override string Code => "bad_request";
 
-    public string Message => message;
+    public override string Message => message;
 }

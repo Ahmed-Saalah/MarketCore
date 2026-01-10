@@ -3,8 +3,8 @@
 namespace Core.Domain.Errors;
 
 [HttpCode(HttpStatusCode.Forbidden)]
-public class ForbiddenError(string message = "Forbidden") : DomainError
+public sealed class ForbiddenError(string message = "Forbidden") : DomainError
 {
     public override string Code => "forbidden";
-    public string Message => message;
+    public override string Message => message;
 }

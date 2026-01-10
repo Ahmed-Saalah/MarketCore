@@ -7,5 +7,5 @@ public class NotFound(string message = "Not found") : DomainError
 {
     public override string Code => "not_found";
 
-    public string Message { get; } = message;
+    public override string Message { get; } = message;
 }

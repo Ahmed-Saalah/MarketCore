@@ -7,5 +7,5 @@ public class ConflictError(string message = "Conflict") : DomainError
 {
     public override string Code => "conflict";
 
-    public string Message => message;
+    public override string Message => message;
 }

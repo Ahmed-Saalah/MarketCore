@@ -86,7 +86,7 @@ public class CreateUserTests
             .ReturnsAsync(IdentityResult.Success);
 
         var expectedToken = "access-token-123";
-        var expectedRefreshToken = new RefreshToken { Token = "refresh-token-xyz" };
+        var expectedRefreshToken = new API.Models.RefreshToken { Token = "refresh-token-xyz" };
 
         _tokenServiceMock
             .Setup(x => x.GenerateAccessToken(It.IsAny<User>(), It.IsAny<IList<string>>()))

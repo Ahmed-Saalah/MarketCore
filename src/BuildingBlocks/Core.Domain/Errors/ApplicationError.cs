@@ -9,5 +9,5 @@ public class ApplicationError : DomainError
     }
 
     public override string Code { get; }
-    public string Message { get; }
+    public override string Message { get; }
 }
