@@ -1,7 +1,7 @@
 ﻿namespace Store.API.Messages;
 
 public sealed record StoreDeactivatedEvent(
-    Guid Id,
+    Guid StoreId,
     int OwnerIdentityId,
     string OwnerName,
     string OwnerEmail,
