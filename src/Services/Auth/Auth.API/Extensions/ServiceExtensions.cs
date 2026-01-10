@@ -3,6 +3,7 @@ using Auth.API.Configuration;
 using Auth.API.Data;
 using Auth.API.Models;
 using Auth.API.Services;
+using Core.Messaging;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -71,6 +72,16 @@ public static class ServiceExtensions
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
         services.AddValidatorsFromAssembly(assembly);
         services.AddHttpContextAccessor();
+
+        return services;
+    }
+
+    public static IServiceCollection AddMessaging(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
+    {
+        services.AddMessageBroker(configuration);
 
         return services;
     }
