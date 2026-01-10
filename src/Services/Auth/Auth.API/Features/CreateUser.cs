@@ -1,7 +1,9 @@
 ﻿using Auth.API.Abstractions;
+using Auth.API.Messages;
 using Auth.API.Models;
 using Auth.API.Services;
 using Core.Domain.Errors;
+using Core.Messaging;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -107,6 +109,7 @@ public sealed class CreateUser
         UserManager<User> userManager,
         ITokenService tokenService,
         IValidator<Request> validator,
+        IEventPublisher eventPublisher,
         IHttpContextAccessor httpContextAccessor
     ) : IRequestHandler<Request, Response>
     {
@@ -140,11 +143,25 @@ public sealed class CreateUser
             var accessToken = tokenService.GenerateAccessToken(user, [request.Role]);
 
             var refreshToken = tokenService.GenerateRefreshToken(
-                httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString()!
+                httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString()
+                    ?? "unknown"
             );
 
             user.RefreshTokens.Add(refreshToken);
             await userManager.UpdateAsync(user);
+
+            await eventPublisher.PublishAsync(
+                new UserCreatedEvent(
+                    user.Id,
+                    user.UserName,
+                    user.Email,
+                    user.PhoneNumber,
+                    user.DisplayName,
+                    request.Role
+                ),
+                "Auth.UserCreatedEvent",
+                cancellationToken
+            );
 
             return new ResponseDto(user.Id, accessToken, refreshToken.Token);
         }
