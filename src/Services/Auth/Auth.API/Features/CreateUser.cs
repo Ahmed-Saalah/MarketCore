@@ -6,7 +6,6 @@ using Core.Domain.Errors;
 using Core.Messaging;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PhoneNumbers;
@@ -24,7 +23,7 @@ public sealed class CreateUser
             new() { Error = errorResult };
     }
 
-    public sealed record ResponseDto(int UserId, string AccessToken, string RefreshToke);
+    public sealed record ResponseDto(int UserId, string AccessToken, string RefreshToken);
 
     public sealed record Request(
         string Username,
