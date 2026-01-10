@@ -1,7 +1,7 @@
-﻿using Auth.API.Abstractions;
-using Auth.API.Messages;
+﻿using Auth.API.Messages;
 using Auth.API.Models;
 using Auth.API.Services;
+using Core.Domain.Abstractions;
 using Core.Domain.Errors;
 using Core.Messaging;
 using FluentValidation;

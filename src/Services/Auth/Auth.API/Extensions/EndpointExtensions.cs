@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Auth.API.Abstractions;
+using Core.Domain.Abstractions;
 
 namespace Auth.API.Extensions;
 
