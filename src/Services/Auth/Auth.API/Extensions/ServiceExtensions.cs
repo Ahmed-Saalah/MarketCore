@@ -3,6 +3,7 @@ using Auth.API.Configuration;
 using Auth.API.Data;
 using Auth.API.Models;
 using Auth.API.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -60,6 +61,16 @@ public static class ServiceExtensions
                     ),
                 };
             });
+
+        return services;
+    }
+
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    {
+        var assembly = typeof(Program).Assembly;
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
+        services.AddValidatorsFromAssembly(assembly);
+        services.AddHttpContextAccessor();
 
         return services;
     }
