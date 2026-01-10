@@ -1,19 +1,10 @@
-using Auth.API.Data;
-using Auth.API.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Auth.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<AuthDbContext>(options => options.UseNpgsql(connectionString));
-
-builder
-    .Services.AddIdentity<User, IdentityRole<int>>()
-    .AddEntityFrameworkStores<AuthDbContext>()
-    .AddDefaultTokenProviders();
-
-builder.Services.AddSwaggerGen();
+builder.Services.AddPersistence(builder.Configuration);
+builder.Services.AddIdentityAuth(builder.Configuration);
+builder.Services.AddSwaggerDocumentation();
 
 var app = builder.Build();
 
@@ -26,5 +17,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapFeatureEndpoints();
 
 app.Run();
