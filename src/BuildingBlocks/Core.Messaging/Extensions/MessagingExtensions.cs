@@ -25,32 +25,34 @@ public static class MessagingExtensions
         return services;
     }
 
-    public static IServiceCollection AddRabbitMqEventConsumer<TEvent, THandler>(
+    public static IServiceCollection AddRabbitMqEventConsumer(
         this IServiceCollection services,
         IConfiguration config,
-        string routingKey,
-        string queueName
+        params (Type EventType, Type HandlerType, string RoutingKey)[] events
     )
-        where TEvent : class
-        where THandler : class, IEventHandler<TEvent>
     {
         var host = config["RABBIT_HOST"] ?? "localhost";
         var user = config["RABBIT_USER"] ?? "guest";
         var pass = config["RABBIT_PASSWORD"] ?? "guest";
+        var queueName = config["RABBIT_QUEUE"] ?? "market_events_queue";
         var exchange = "market_event_bus";
 
-        services.AddScoped<IEventHandler<TEvent>, THandler>();
-        services.AddScoped<THandler>();
+        foreach (var evt in events)
+        {
+            var handlerInterface = typeof(IEventHandler<>).MakeGenericType(evt.EventType);
+            services.AddScoped(handlerInterface, evt.HandlerType);
+            services.AddScoped(evt.HandlerType);
+        }
 
-        services.AddHostedService(sp => new RabbitMqConsumerService<TEvent, THandler>(
-            sp.GetRequiredService<ILogger<RabbitMqConsumerService<TEvent, THandler>>>(),
+        services.AddHostedService(sp => new RabbitMqConsumerService(
+            sp.GetRequiredService<ILogger<RabbitMqConsumerService>>(),
             sp,
             host,
             user,
             pass,
             exchange,
             queueName,
-            routingKey
+            events.ToDictionary(e => e.RoutingKey, e => e.EventType)
         ));
 
         return services;

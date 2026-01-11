@@ -71,13 +71,13 @@ public static class ServiceExtensions
     {
         services.AddMessageBroker(configuration);
 
-        services.AddRabbitMqEventConsumer<
-            UserCreatedEventHandler.Event,
-            UserCreatedEventHandler.Handler
-        >(
-            configuration,
-            routingKey: "Auth.UserCreatedEvent",
-            queueName: "store-service.user-created"
+        services.AddRabbitMqEventConsumer(
+            config: configuration,
+            events: (
+                typeof(UserCreatedEventHandler.Event),
+                typeof(UserCreatedEventHandler.Handler),
+                "Auth.UserCreatedEvent"
+            )
         );
 
         return services;
