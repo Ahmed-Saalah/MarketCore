@@ -12,10 +12,21 @@ public static class MessagingExtensions
         IConfiguration config
     )
     {
-        var host = config["RABBIT_HOST"] ?? "localhost";
-        var user = config["RABBIT_USER"] ?? "guest";
-        var pass = config["RABBIT_PASSWORD"] ?? "guest";
-        var exchange = "market_event_bus";
+        var host =
+            config["RABBIT_HOST"]
+            ?? throw new ArgumentNullException("RABBIT_HOST is not configured");
+
+        var user =
+            config["RABBIT_USER"]
+            ?? throw new ArgumentNullException("RABBIT_USER is not configured");
+
+        var pass =
+            config["RABBIT_PASSWORD"]
+            ?? throw new ArgumentNullException("RABBIT_PASSWORD is not configured");
+
+        var exchange =
+            config["RABBIT_EXCHANGE"]
+            ?? throw new ArgumentNullException("RABBIT_EXCHANGE is not configured");
 
         services.AddSingleton<IEventPublisher>(sp =>
         {
@@ -31,11 +42,25 @@ public static class MessagingExtensions
         params (Type EventType, Type HandlerType, string RoutingKey)[] events
     )
     {
-        var host = config["RABBIT_HOST"] ?? "localhost";
-        var user = config["RABBIT_USER"] ?? "guest";
-        var pass = config["RABBIT_PASSWORD"] ?? "guest";
-        var queueName = config["RABBIT_QUEUE"] ?? "market_events_queue";
-        var exchange = "market_event_bus";
+        var host =
+            config["RABBIT_HOST"]
+            ?? throw new ArgumentNullException("RABBIT_HOST is not configured");
+
+        var user =
+            config["RABBIT_USER"]
+            ?? throw new ArgumentNullException("RABBIT_USER is not configured");
+
+        var pass =
+            config["RABBIT_PASSWORD"]
+            ?? throw new ArgumentNullException("RABBIT_PASSWORD is not configured");
+
+        var exchange =
+            config["RABBIT_EXCHANGE"]
+            ?? throw new ArgumentNullException("RABBIT_EXCHANGE is not configured");
+
+        var queueName =
+            config["RABBIT_QUEUE"]
+            ?? throw new ArgumentNullException("RABBIT_QUEUE is not configured");
 
         foreach (var evt in events)
         {
