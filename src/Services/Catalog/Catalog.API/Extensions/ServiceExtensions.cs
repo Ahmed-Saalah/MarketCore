@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Security.Claims;
+using System.Text;
 using Catalog.API.Configuration;
 using Catalog.API.Data;
 using Core.Messaging;
@@ -55,11 +56,15 @@ public static class ServiceExtensions
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(jwtSettings.Secret)
                     ),
+                    RoleClaimType = ClaimTypes.Role,
                 };
             });
 
-        services.AddAuthorization();
-
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("Seller", policy => policy.RequireRole("Seller"));
+            options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+        });
         return services;
     }
 
@@ -69,7 +74,6 @@ public static class ServiceExtensions
     )
     {
         services.AddMessageBroker(configuration);
-
         return services;
     }
 }

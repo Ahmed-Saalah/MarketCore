@@ -11,7 +11,7 @@ public class Product
     public decimal Price { get; set; }
     public string Currency { get; set; } = "USD";
     public bool IsActive { get; set; } = true;
-    public int CategoryId { get; set; }
+    public Guid CategoryId { get; set; }
     public Category? Category { get; set; }
     public Guid StoreId { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
