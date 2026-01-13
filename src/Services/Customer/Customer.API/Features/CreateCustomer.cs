@@ -1,4 +1,5 @@
-﻿using Customer.API.Data;
+﻿using Core.Messaging;
+using Customer.API.Data;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +26,8 @@ public sealed class CreateCustomer
         }
     }
 
-    public class Handler(CustomerDbContext dbContext) : IRequestHandler<Command>
+    public class Handler(CustomerDbContext dbContext, IEventPublisher eventPublisher)
+        : IRequestHandler<Command>
     {
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
@@ -52,6 +54,18 @@ public sealed class CreateCustomer
 
             dbContext.Customers.Add(newCustomer);
             await dbContext.SaveChangesAsync(cancellationToken);
+
+            await eventPublisher.PublishAsync(
+                new Messages.CustomerCreatedEvent(
+                    newCustomer.Id,
+                    newCustomer.IdentityId,
+                    newCustomer.Email,
+                    newCustomer.DisplayName,
+                    newCustomer.CreatedAt
+                ),
+                routingKey: "Customer.CustomerCreatedEvent",
+                cancellationToken
+            );
         }
     }
 }
