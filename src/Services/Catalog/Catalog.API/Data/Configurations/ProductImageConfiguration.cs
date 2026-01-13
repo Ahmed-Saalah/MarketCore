@@ -1,0 +1,14 @@
+﻿using Catalog.API.Entities.Products;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Catalog.API.Data.Configurations;
+
+public class ProductImageConfiguration : IEntityTypeConfiguration<ProductImage>
+{
+    public void Configure(EntityTypeBuilder<ProductImage> builder)
+    {
+        builder.HasKey(i => i.Id);
+        builder.Property(i => i.ImageUrl).IsRequired();
+    }
+}
