@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Auth.API.Configuration;
 using Auth.API.Data;
+using Auth.API.Handlers;
 using Auth.API.Models;
 using Auth.API.Services;
 using Core.Messaging;
@@ -83,6 +84,20 @@ public static class ServiceExtensions
     )
     {
         services.AddMessageBroker(configuration);
+
+        services.AddRabbitMqEventConsumer(
+            configuration,
+            (
+                typeof(StoreCreatedEventHandler.Event),
+                typeof(StoreCreatedEventHandler.Handler),
+                "Store.StoreCreatedEvent"
+            ),
+            (
+                typeof(CustomerCreatedEventHandler.Event),
+                typeof(CustomerCreatedEventHandler.Handler),
+                "Customer.CustomerCreatedEvent"
+            )
+        );
 
         return services;
     }
