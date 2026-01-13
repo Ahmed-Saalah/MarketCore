@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Catalog.API.Entities.Categories;
+﻿using Catalog.API.Entities.Categories;
 
 namespace Catalog.API.Entities.Products;
 
@@ -15,6 +14,7 @@ public class Product
     public int CategoryId { get; set; }
     public Category? Category { get; set; }
     public Guid StoreId { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public List<ProductImage> Images { get; set; } = new();
     public List<ProductAttribute> Attributes { get; set; } = new();
 }
