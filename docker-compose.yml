@@ -19,3 +19,91 @@ services:
       - "5432:5432"
     volumes:
       - ~/.docker-conf/postgres/data:/var/lib/postgresql/data
+
+  auth-api:
+    image: ${DOCKER_REGISTRY-}authapi
+    build:
+      context: .
+      dockerfile: src/Services/Auth/Auth.API/Dockerfile
+    container_name: auth-api
+    ports:
+      - "5001:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=AuthDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+      - RabbitMq__Host=${RABBIT_HOST}
+      - RabbitMq__UserName=${RABBIT_USER} 
+      - RabbitMq__Password=${RABBIT_PASSWORD}
+      - JwtOptions__Secret=${JWT_SECRET}
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - market-network
+
+  store-api:
+    image: ${DOCKER_REGISTRY-}storeapi
+    build:
+      context: .
+      dockerfile: src/Services/Store/Store.API/Dockerfile
+    container_name: store-api
+    ports:
+      - "5002:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=StoreDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+      - RabbitMq__Host=${RABBIT_HOST}
+      - RabbitMq__UserName=${RABBIT_USER}
+      - RabbitMq__Password=${RABBIT_PASSWORD}
+      - JwtOptions__Secret=${JWT_SECRET}
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - market-network
+
+  customer-api:
+    image: ${DOCKER_REGISTRY-}customerapi
+    build:
+      context: .
+      dockerfile: src/Services/Customer/Customer.API/Dockerfile
+    container_name: customer-api
+    ports:
+      - "5003:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=CustomerDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+      - RabbitMq__Host=${RABBIT_HOST}
+      - RabbitMq__UserName=${RABBIT_USER}
+      - RabbitMq__Password=${RABBIT_PASSWORD}
+      - JwtOptions__Secret=${JWT_SECRET}
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - market-network
+
+  catalog-api:
+    image: ${DOCKER_REGISTRY-}catalogapi
+    build:
+      context: .
+      dockerfile: src/Services/Catalog/Catalog.API/Dockerfile
+    container_name: catalog-api
+    ports:
+      - "5004:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=CatalogDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+      - RabbitMq__Host=${RABBIT_HOST}
+      - RabbitMq__UserName=${RABBIT_USER}
+      - RabbitMq__Password=${RABBIT_PASSWORD}
+      - JwtOptions__Secret=${JWT_SECRET}
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - market-network
