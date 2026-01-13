@@ -57,8 +57,8 @@ public sealed class RefreshToken
 
             var user = existingToken.User!;
             var roles = await userManager.GetRolesAsync(user);
-
-            var newAccessToken = tokenService.GenerateAccessToken(user, roles);
+            var userClaims = await userManager.GetClaimsAsync(user);
+            var newAccessToken = tokenService.GenerateAccessToken(user, roles, userClaims);
             var newRefreshToken = tokenService.GenerateRefreshToken(ipAddress);
 
             existingToken.RevokedAt = DateTime.UtcNow;

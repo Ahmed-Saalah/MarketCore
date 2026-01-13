@@ -139,7 +139,7 @@ public sealed class CreateUser
             }
 
             await userManager.AddToRoleAsync(user, request.Role);
-            var accessToken = tokenService.GenerateAccessToken(user, [request.Role]);
+            var accessToken = tokenService.GenerateAccessToken(user, [request.Role], []);
 
             var refreshToken = tokenService.GenerateRefreshToken(
                 httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString()

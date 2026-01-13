@@ -13,7 +13,7 @@ public class TokenService(IOptions<JwtOptions> jwtOptions) : ITokenService
 {
     private readonly JwtOptions _jwtOptions = jwtOptions.Value;
 
-    public string GenerateAccessToken(User user, IList<string> roles)
+    public string GenerateAccessToken(User user, IList<string> roles, IList<Claim> userClaims)
     {
         var claims = new List<Claim>
         {
@@ -23,10 +23,14 @@ public class TokenService(IOptions<JwtOptions> jwtOptions) : ITokenService
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-        }
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+        claims.AddRange(
+            userClaims.Where(c =>
+                c.Type != ClaimTypes.NameIdentifier
+                && c.Type != ClaimTypes.Email
+                && c.Type != ClaimTypes.Name
+            )
+        );
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

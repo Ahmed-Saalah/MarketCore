@@ -71,8 +71,9 @@ public sealed class Login
 
             var roles = await userManager.GetRolesAsync(user);
             var primaryRole = roles.FirstOrDefault() ?? Roles.Customer;
+            var userClaims = await userManager.GetClaimsAsync(user);
 
-            var accessToken = tokenService.GenerateAccessToken(user, roles);
+            var accessToken = tokenService.GenerateAccessToken(user, roles, userClaims);
 
             var ipAddress =
                 httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString()
