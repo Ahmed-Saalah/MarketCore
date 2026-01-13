@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.API.Features.Products;
 
-public static class DeactivateProduct
+public static class ActivateProduct
 {
     public sealed record Request(Guid Id, Guid StoreId) : IRequest<Result<bool>>;
 
@@ -39,8 +39,8 @@ public static class DeactivateProduct
             await dbContext.SaveChangesAsync(cancellationToken);
 
             await eventPublisher.PublishAsync(
-                new ProductDeactivatedEvent(product.Id, DateTime.UtcNow),
-                "Catalog.Product.ProductDeactivatedEvent",
+                new ProductActivatedEvent(product.Id, DateTime.UtcNow),
+                "Catalog.Product.ProductActivatedEvent",
                 cancellationToken
             );
 
@@ -53,7 +53,7 @@ public static class DeactivateProduct
         public void Map(IEndpointRouteBuilder app)
         {
             app.MapPatch(
-                    "api/products/{id:guid}/deactivate",
+                    "api/products/{id:guid}/activate",
                     async (Guid id, IMediator mediator, ClaimsPrincipal user) =>
                     {
                         if (user.GetStoreId() is not { } storeId)
