@@ -1,4 +1,5 @@
-﻿using Auth.API.Constants;
+﻿using System.Security.Claims;
+using Auth.API.Constants;
 using Auth.API.Data;
 using Auth.API.Features;
 using Auth.API.Models;
@@ -59,7 +60,6 @@ public class LoginTests
     [Fact]
     public async Task Handle_ShouldReturnSuccess_WhenCredentialsAreValid()
     {
-        // Arrange
         var request = new Login.Request("test@mail.com", "Password123!");
         var user = new User
         {
@@ -79,11 +79,15 @@ public class LoginTests
             .Setup(x => x.GetRolesAsync(user))
             .ReturnsAsync(new List<string> { Roles.Customer });
 
+        _userManagerMock.Setup(x => x.GetClaimsAsync(user)).ReturnsAsync(new List<Claim>());
+
         var expectedAccessToken = "access-token-abc";
         var expectedRefreshToken = new API.Models.RefreshToken { Token = "refresh-token-xyz" };
 
         _tokenServiceMock
-            .Setup(x => x.GenerateAccessToken(user, It.IsAny<IList<string>>()))
+            .Setup(x =>
+                x.GenerateAccessToken(user, It.IsAny<IList<string>>(), It.IsAny<IList<Claim>>())
+            )
             .Returns(expectedAccessToken);
 
         _tokenServiceMock

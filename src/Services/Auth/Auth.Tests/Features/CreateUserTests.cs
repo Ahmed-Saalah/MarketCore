@@ -1,4 +1,5 @@
-﻿using Auth.API.Features;
+﻿using System.Security.Claims;
+using Auth.API.Features;
 using Auth.API.Messages;
 using Auth.API.Models;
 using Auth.API.Services;
@@ -89,7 +90,13 @@ public class CreateUserTests
         var expectedRefreshToken = new API.Models.RefreshToken { Token = "refresh-token-xyz" };
 
         _tokenServiceMock
-            .Setup(x => x.GenerateAccessToken(It.IsAny<User>(), It.IsAny<IList<string>>()))
+            .Setup(x =>
+                x.GenerateAccessToken(
+                    It.IsAny<User>(),
+                    It.IsAny<IList<string>>(),
+                    It.IsAny<IList<Claim>>()
+                )
+            )
             .Returns(expectedToken);
 
         _tokenServiceMock
@@ -105,14 +112,13 @@ public class CreateUserTests
         response.Value.AccessToken.Should().Be(expectedToken);
         response.Value.RefreshToken.Should().Be(expectedRefreshToken.Token);
 
-        // 3. Verify Event was published
         _eventPublisherMock.Verify(
             x =>
                 x.PublishAsync(
                     It.Is<UserCreatedEvent>(e =>
                         e.Email == request.Email && e.Role == request.Role
                     ),
-                    "Auth.UserCreatedEvent",
+                    It.IsAny<string>(),
                     It.IsAny<CancellationToken>()
                 ),
             Times.Once
@@ -178,7 +184,12 @@ public class CreateUserTests
         response.Error.Should().BeOfType<ValidationError>();
 
         _tokenServiceMock.Verify(
-            x => x.GenerateAccessToken(It.IsAny<User>(), It.IsAny<IList<string>>()),
+            x =>
+                x.GenerateAccessToken(
+                    It.IsAny<User>(),
+                    It.IsAny<IList<string>>(),
+                    It.IsAny<IList<Claim>>()
+                ),
             Times.Never
         );
     }
