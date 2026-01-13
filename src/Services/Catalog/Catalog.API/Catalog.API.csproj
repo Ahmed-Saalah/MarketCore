@@ -33,7 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Categories\" />
     <Folder Include="Features\Products\" />
   </ItemGroup>
 
