@@ -1,7 +1,9 @@
-﻿using FluentValidation;
+﻿using Core.Messaging;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Store.API.Data;
+using Store.API.Messages;
 
 namespace Store.API.Features;
 
@@ -25,7 +27,8 @@ public sealed class CreateStore
         }
     }
 
-    public class Handler(StoreDbContext dbContext) : IRequestHandler<Command>
+    public class Handler(StoreDbContext dbContext, IEventPublisher eventPublisher)
+        : IRequestHandler<Command>
     {
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
@@ -54,6 +57,18 @@ public sealed class CreateStore
 
             dbContext.Stores.Add(newStore);
             await dbContext.SaveChangesAsync(cancellationToken);
+
+            await eventPublisher.PublishAsync(
+                new StoreCreatedEvent(
+                    StoreId: newStore.Id,
+                    OwnerIdentityId: newStore.OwnerIdentityId,
+                    OwnerName: newStore.OwnerName,
+                    OwnerEmail: newStore.OwnerEmail,
+                    CreatedAt: newStore.CreatedAt
+                ),
+                routingKey: "Store.StoreCreatedEvent",
+                cancellationToken: cancellationToken
+            );
         }
     }
 }
