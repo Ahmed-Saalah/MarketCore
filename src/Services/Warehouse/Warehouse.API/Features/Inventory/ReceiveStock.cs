@@ -10,7 +10,7 @@ using Warehouse.API.Messages;
 
 namespace Warehouse.API.Features.Inventory;
 
-public static class ReceiveStock
+public sealed class ReceiveStock
 {
     public record Request(Guid ProductId, int Quantity, string ReferenceNumber)
         : IRequest<Response>;
@@ -105,9 +105,9 @@ public static class ReceiveStock
         {
             app.MapPost(
                     "/api/inventory/receive",
-                    async (Request request, ISender sender) =>
+                    async (Request request, IMediator mediator) =>
                     {
-                        var response = await sender.Send(request);
+                        var response = await mediator.Send(request);
 
                         return response.ToHttpResult();
                     }
