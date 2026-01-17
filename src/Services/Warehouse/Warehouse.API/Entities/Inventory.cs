@@ -12,7 +12,5 @@
         public int ReservedQuantity { get; set; }
 
         public int AvailableStock => QuantityOnHand - ReservedQuantity;
-
-        public int ReorderLevel { get; set; }
     }
 }

@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Warehouse.API.Configuration;
+using Warehouse.API.Data;
+using Warehouse.API.Handlers;
 
 namespace Warehouse.API.Extensions;
 
@@ -72,13 +74,13 @@ public static class ServiceExtensions
 
         services.AddMessageBroker();
 
-        //services.AddRabbitMqEventConsumer(
-        //    events: (
-        //        typeof(UserCreatedEventHandler.Event),
-        //        typeof(UserCreatedEventHandler.Handler),
-        //        "Auth.UserCreatedEvent"
-        //    )
-        //);
+        services.AddRabbitMqEventConsumer(
+            events: (
+                typeof(ProductCreatedEventHandler.Event),
+                typeof(ProductCreatedEventHandler.Handler),
+                "Catalog.Product.ProductCreatedEvent"
+            )
+        );
 
         return services;
     }
