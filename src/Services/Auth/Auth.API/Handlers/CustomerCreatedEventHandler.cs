@@ -16,18 +16,13 @@ public sealed class CustomerCreatedEventHandler
         DateTime CreatedAt
     ) : IRequest;
 
-    public sealed class Handler(UserManager<User> userManager, ILogger logger)
-        : IEventHandler<Event>
+    public sealed class Handler(UserManager<User> userManager) : IEventHandler<Event>
     {
         public async Task HandleAsync(Event @event, CancellationToken cancellationToken = default)
         {
             var user = await userManager.FindByIdAsync(@event.IdentityId.ToString());
             if (user is null)
             {
-                logger.LogWarning(
-                    "User with ID {UserId} not found for StoreCreatedEvent",
-                    @event.IdentityId
-                );
                 return;
             }
 

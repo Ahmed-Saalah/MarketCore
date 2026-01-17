@@ -3,6 +3,7 @@ using System.Text;
 using Catalog.API.Configuration;
 using Catalog.API.Data;
 using Core.Messaging;
+using Core.Messaging.Options;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -73,7 +74,8 @@ public static class ServiceExtensions
         IConfiguration configuration
     )
     {
-        services.AddMessageBroker(configuration);
+        services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
+        services.AddMessageBroker();
         return services;
     }
 }

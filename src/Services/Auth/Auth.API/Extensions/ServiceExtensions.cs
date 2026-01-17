@@ -5,6 +5,7 @@ using Auth.API.Handlers;
 using Auth.API.Models;
 using Auth.API.Services;
 using Core.Messaging;
+using Core.Messaging.Options;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -83,10 +84,11 @@ public static class ServiceExtensions
         IConfiguration configuration
     )
     {
-        services.AddMessageBroker(configuration);
+        services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
+
+        services.AddMessageBroker();
 
         services.AddRabbitMqEventConsumer(
-            configuration,
             (
                 typeof(StoreCreatedEventHandler.Event),
                 typeof(StoreCreatedEventHandler.Handler),
