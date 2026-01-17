@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Reflection;
+using Core.Domain.Response;
 using Microsoft.AspNetCore.Http;
 
 namespace Core.Domain.Errors;

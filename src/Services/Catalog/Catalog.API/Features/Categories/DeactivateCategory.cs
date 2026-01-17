@@ -2,6 +2,7 @@
 using Catalog.API.Messages.Categories;
 using Core.Domain.Abstractions;
 using Core.Domain.Errors;
+using Core.Domain.Response;
 using Core.Messaging;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

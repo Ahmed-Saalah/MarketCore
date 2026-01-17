@@ -1,4 +1,6 @@
-﻿namespace Core.Domain.Errors;
+﻿using Core.Domain.Errors;
+
+namespace Core.Domain.Response;
 
 public class Result<T>
 {

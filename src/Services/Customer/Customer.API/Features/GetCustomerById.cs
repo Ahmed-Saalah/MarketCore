@@ -1,5 +1,6 @@
 ﻿using Core.Domain.Abstractions;
 using Core.Domain.Errors;
+using Core.Domain.Response;
 using Customer.API.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

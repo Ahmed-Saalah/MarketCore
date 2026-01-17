@@ -6,6 +6,7 @@ using Catalog.API.Extensions;
 using Catalog.API.Messages.Products;
 using Core.Domain.Abstractions;
 using Core.Domain.Errors;
+using Core.Domain.Response;
 using Core.Messaging;
 using FluentValidation;
 using MediatR;

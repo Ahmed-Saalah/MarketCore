@@ -4,6 +4,7 @@ using Auth.API.Models;
 using Auth.API.Services;
 using Core.Domain.Abstractions;
 using Core.Domain.Errors;
+using Core.Domain.Response;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;

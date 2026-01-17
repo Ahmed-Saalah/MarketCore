@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Core.Domain.Abstractions;
 using Core.Domain.Errors;
+using Core.Domain.Response;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Store.API.Data;
