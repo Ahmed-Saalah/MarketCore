@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text;
 using Cart.API.Configuration;
+using Cart.API.Data;
 using Core.Messaging;
 using Core.Messaging.Options;
 using FluentValidation;
