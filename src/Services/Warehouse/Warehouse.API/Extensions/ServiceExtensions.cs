@@ -75,10 +75,15 @@ public static class ServiceExtensions
         services.AddMessageBroker();
 
         services.AddRabbitMqEventConsumer(
-            events: (
+            (
                 typeof(ProductCreatedEventHandler.Event),
                 typeof(ProductCreatedEventHandler.Handler),
                 "Catalog.Product.ProductCreatedEvent"
+            ),
+            (
+                typeof(ProductUpdatedEventHandler.Event),
+                typeof(ProductUpdatedEventHandler.Handler),
+                "Catalog.Product.ProductUpdatedEvent"
             )
         );
 

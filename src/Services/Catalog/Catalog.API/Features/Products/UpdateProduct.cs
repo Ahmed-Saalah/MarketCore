@@ -24,6 +24,7 @@ public static class UpdateProduct
         string Name,
         string Description,
         decimal Price,
+        string Sku,
         List<ImageDto> Images,
         List<AttributeDto> Attributes
     );
@@ -64,6 +65,7 @@ public static class UpdateProduct
             product.Name = request.Data.Name;
             product.Description = request.Data.Description;
             product.Price = request.Data.Price;
+            product.Sku = request.Data.Sku;
 
             product.Images.Clear();
             if (request.Data.Images.Any())
