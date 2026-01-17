@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
@@ -15,6 +16,11 @@ public class CachedCartRepository : ICartRepository
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         ReferenceHandler = ReferenceHandler.Preserve,
         WriteIndented = false,
+    };
+
+    private static readonly DistributedCacheEntryOptions _cacheOptions = new()
+    {
+        SlidingExpiration = TimeSpan.FromHours(2),
     };
 
     public CachedCartRepository(IDistributedCache cache, CartDbContext dbContext)
@@ -43,15 +49,41 @@ public class CachedCartRepository : ICartRepository
             return null;
         }
 
-        var serializedCart = JsonSerializer.Serialize(cartFromDb);
-
         await _cache.SetStringAsync(
             cacheKey,
             JsonSerializer.Serialize(cartFromDb, _jsonOptions),
-            new DistributedCacheEntryOptions { SlidingExpiration = TimeSpan.FromHours(2) },
+            _cacheOptions,
             ct
         );
 
+        return cartFromDb;
+    }
+
+    public async Task<Entities.Cart?> GetCartByUserIdAsync(
+        Guid userId,
+        CancellationToken ct = default
+    )
+    {
+        string userPointerKey = $"user:{userId}";
+        var cachedCartId = await _cache.GetStringAsync(userPointerKey, ct);
+        if (!string.IsNullOrEmpty(cachedCartId) && Guid.TryParse(cachedCartId, out var cartId))
+        {
+            var cart = await GetCartAsync(cartId, ct);
+            if (cart is not null)
+                return cart;
+        }
+
+        var cartFromDb = await _dbContext
+            .Carts.Include(c => c.Items)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.UserId == userId, ct);
+
+        if (cartFromDb is null)
+        {
+            return null;
+        }
+
+        await StoreCartAsync(cartFromDb, ct);
         return cartFromDb;
     }
 
@@ -60,32 +92,29 @@ public class CachedCartRepository : ICartRepository
         CancellationToken ct = default
     )
     {
-        var exists = await _dbContext.Carts.AnyAsync(c => c.Id == cart.Id, ct);
-        if (exists)
-        {
-            _dbContext.Carts.Update(cart);
-        }
-        else
-        {
-            await _dbContext.Carts.AddAsync(cart, ct);
-        }
+        _dbContext.Carts.Update(cart);
         await _dbContext.SaveChangesAsync(ct);
 
-        string cacheKey = $"cart:{cart.Id}";
-        var serializedCart = JsonSerializer.Serialize(cart);
-
+        string cartKey = $"cart:{cart.Id}";
         await _cache.SetStringAsync(
-            cacheKey,
+            cartKey,
             JsonSerializer.Serialize(cart, _jsonOptions),
-            new DistributedCacheEntryOptions { SlidingExpiration = TimeSpan.FromHours(2) },
+            _cacheOptions,
             ct
         );
+
+        if (cart.UserId.HasValue)
+        {
+            string userPointerKey = $"user:{cart.UserId}";
+            await _cache.SetStringAsync(userPointerKey, cart.Id.ToString(), _cacheOptions, ct);
+        }
+
         return cart;
     }
 
     public async Task<bool> ClearCartAsync(Guid cartId, CancellationToken ct = default)
     {
-        var cart = await dbContext
+        var cart = await _dbContext
             .Carts.Include(c => c.Items)
             .FirstOrDefaultAsync(c => c.Id == cartId, ct);
 
@@ -99,7 +128,13 @@ public class CachedCartRepository : ICartRepository
         await _dbContext.SaveChangesAsync(ct);
 
         string cacheKey = $"cart:{cartId}";
-        await _cache.RemoveAsync(cacheKey, ct);
+
+        await _cache.SetStringAsync(
+            cacheKey,
+            JsonSerializer.Serialize(cart, _jsonOptions),
+            _cacheOptions,
+            ct
+        );
 
         return true;
     }
