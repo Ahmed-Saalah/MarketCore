@@ -6,7 +6,7 @@ namespace Warehouse.API.Data;
 public class WarehouseDbContext(DbContextOptions<WarehouseDbContext> options) : DbContext(options)
 {
     public DbSet<Inventory> Inventory { get; set; }
-    public DbSet<StockTransaction> StockTransaction { get; set; }
+    public DbSet<StockTransaction> StockTransactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -32,6 +32,15 @@ public class WarehouseDbContext(DbContextOptions<WarehouseDbContext> options) : 
             entity.Property(e => e.ReferenceId).HasMaxLength(100);
 
             entity.Property(e => e.Type).HasConversion<string>();
+
+            entity
+                .HasIndex(t => new
+                {
+                    t.InventoryId,
+                    t.ReferenceId,
+                    t.Type,
+                })
+                .IsUnique();
 
             entity
                 .HasOne(t => t.Inventory)
