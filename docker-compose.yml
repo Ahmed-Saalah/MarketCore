@@ -23,8 +23,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ~/.docker-conf/postgres/data:/var/lib/postgresql/data
-      # - postgres_data:/var/lib/postgresql/datas
+      # - ~/.docker-conf/postgres/data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - market-network
 
