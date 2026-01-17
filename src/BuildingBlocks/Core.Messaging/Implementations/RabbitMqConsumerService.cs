@@ -49,10 +49,38 @@ public class RabbitMqConsumerService : BackgroundService
             HostName = _hostName,
             UserName = _userName,
             Password = _password,
+            AutomaticRecoveryEnabled = true,
         };
 
-        _connection = await factory.CreateConnectionAsync(cancellationToken);
-        _channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
+        const int maxRetries = 10;
+        var delay = TimeSpan.FromSeconds(5);
+
+        for (int attempt = 1; attempt <= maxRetries; attempt++)
+        {
+            try
+            {
+                _connection = await factory.CreateConnectionAsync(cancellationToken);
+                _channel = await _connection.CreateChannelAsync(
+                    cancellationToken: cancellationToken
+                );
+                break;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(
+                    ex,
+                    "Attempt {Attempt}/{MaxRetries} failed to connect to RabbitMQ. Retrying in {Delay}...",
+                    attempt,
+                    maxRetries,
+                    delay
+                );
+
+                if (attempt == maxRetries)
+                    throw;
+
+                await Task.Delay(delay, cancellationToken);
+            }
+        }
 
         await _channel.ExchangeDeclareAsync(_exchangeName, ExchangeType.Topic, durable: true);
         await _channel.QueueDeclareAsync(
