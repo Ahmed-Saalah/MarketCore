@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.API.Features.Categories;
 
-public static class ActivateCategory
+public sealed class ActivateCategory
 {
-    public record Request(Guid Id) : IRequest<Result<bool>>;
+    public sealed record Request(Guid Id) : IRequest<Result<bool>>;
 
-    public class Handler(CatalogDbContext dbContext, IEventPublisher eventPublisher)
+    public sealed class Handler(CatalogDbContext dbContext, IEventPublisher eventPublisher)
         : IRequestHandler<Request, Result<bool>>
     {
         public async Task<Result<bool>> Handle(Request request, CancellationToken cancellationToken)
@@ -70,7 +70,7 @@ public static class ActivateCategory
         }
     }
 
-    public class Endpoint : IEndpoint
+    public sealed class Endpoint : IEndpoint
     {
         public void Map(IEndpointRouteBuilder app)
         {

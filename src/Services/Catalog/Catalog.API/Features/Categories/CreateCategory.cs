@@ -72,7 +72,7 @@ public sealed class CreateCategory
         }
     }
 
-    public class Endpoint : IEndpoint
+    public sealed class Endpoint : IEndpoint
     {
         public void Map(IEndpointRouteBuilder app)
         {
