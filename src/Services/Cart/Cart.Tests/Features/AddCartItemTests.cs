@@ -10,7 +10,7 @@ using FluentValidation.Results;
 using FluentValidation.TestHelper;
 using Moq;
 
-namespace Cart.API.Tests.Features;
+namespace Cart.Tests.Features;
 
 public class AddItemTests
 {
@@ -110,11 +110,7 @@ public class AddItemTests
             result.Error.Should().BeOfType<ValidationError>();
 
             _repositoryMock.Verify(
-                x =>
-                    x.StoreCartAsync(
-                        It.IsAny<Cart.API.Entities.Cart>(),
-                        It.IsAny<CancellationToken>()
-                    ),
+                x => x.StoreCartAsync(It.IsAny<API.Entities.Cart>(), It.IsAny<CancellationToken>()),
                 Times.Never
             );
         }
@@ -130,7 +126,7 @@ public class AddItemTests
                 .Setup(x =>
                     x.GetCartByUserIdAsync(request.UserId!.Value, It.IsAny<CancellationToken>())
                 )
-                .ReturnsAsync((Cart.API.Entities.Cart?)null);
+                .ReturnsAsync((API.Entities.Cart?)null);
 
             // Act
             var result = await _handler.Handle(request, CancellationToken.None);
@@ -141,7 +137,7 @@ public class AddItemTests
             _repositoryMock.Verify(
                 x =>
                     x.StoreCartAsync(
-                        It.Is<Cart.API.Entities.Cart>(c =>
+                        It.Is<API.Entities.Cart>(c =>
                             c.UserId == request.UserId
                             && c.Items.Count == 1
                             && c.Items.First().ProductId == request.Item.ProductId
@@ -159,7 +155,7 @@ public class AddItemTests
             var request = CreateValidRequest();
             SetupValidationSuccess(request);
 
-            var existingCart = new Cart.API.Entities.Cart
+            var existingCart = new API.Entities.Cart
             {
                 Id = Guid.NewGuid(),
                 UserId = request.UserId,
@@ -181,7 +177,7 @@ public class AddItemTests
             _repositoryMock.Verify(
                 x =>
                     x.StoreCartAsync(
-                        It.Is<Cart.API.Entities.Cart>(c => c.Items.Count == 1),
+                        It.Is<API.Entities.Cart>(c => c.Items.Count == 1),
                         It.IsAny<CancellationToken>()
                     ),
                 Times.Once
@@ -227,7 +223,7 @@ public class AddItemTests
             _repositoryMock.Verify(
                 x =>
                     x.StoreCartAsync(
-                        It.Is<Cart.API.Entities.Cart>(c =>
+                        It.Is<API.Entities.Cart>(c =>
                             c.Items.First().Quantity == expectedQty
                             && c.Items.First().UnitPrice == request.Item.UnitPrice
                         ),
@@ -246,7 +242,7 @@ public class AddItemTests
 
             _repositoryMock
                 .Setup(x => x.GetCartByUserIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((Cart.API.Entities.Cart?)null);
+                .ReturnsAsync((API.Entities.Cart?)null);
 
             // Act
             await _handler.Handle(request, CancellationToken.None);

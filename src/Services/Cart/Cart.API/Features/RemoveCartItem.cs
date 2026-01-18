@@ -13,7 +13,7 @@ namespace Cart.API.Features;
 
 public sealed class RemoveItem
 {
-    public record Request(Guid CartId, Guid? UserId, Guid ProductId) : IRequest<Response>;
+    public sealed record Request(Guid CartId, Guid? UserId, Guid ProductId) : IRequest<Response>;
 
     public sealed class Response : Result<bool>
     {
@@ -22,7 +22,7 @@ public sealed class RemoveItem
         public static implicit operator Response(DomainError error) => new() { Error = error };
     }
 
-    internal sealed class Handler(ICartRepository repository, IEventPublisher eventPublisher)
+    public sealed class Handler(ICartRepository repository, IEventPublisher eventPublisher)
         : IRequestHandler<Request, Response>
     {
         public async Task<Response> Handle(Request request, CancellationToken ct)
