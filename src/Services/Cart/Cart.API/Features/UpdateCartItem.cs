@@ -41,7 +41,7 @@ public sealed class UpdateCartItem
         public static implicit operator Response(DomainError error) => new() { Error = error };
     }
 
-    public class Validator : AbstractValidator<Request>
+    public sealed class Validator : AbstractValidator<Request>
     {
         public Validator()
         {
@@ -51,7 +51,7 @@ public sealed class UpdateCartItem
         }
     }
 
-    internal sealed class Handler(
+    public sealed class Handler(
         ICartRepository repository,
         IValidator<Request> validator,
         IEventPublisher eventPublisher

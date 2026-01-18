@@ -193,7 +193,7 @@ public class AddItemTests
 
             var existingProductId = request.Item.ProductId;
 
-            var existingCart = new Entities.Cart
+            var existingCart = new Cart.API.Entities.Cart
             {
                 Id = Guid.NewGuid(),
                 UserId = request.UserId,
