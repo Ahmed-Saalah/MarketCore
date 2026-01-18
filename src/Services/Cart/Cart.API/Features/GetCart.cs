@@ -34,7 +34,7 @@ public sealed class GetCart
         public static implicit operator Response(DomainError error) => new() { Error = error };
     }
 
-    internal sealed class Handler(ICartRepository repository) : IRequestHandler<Request, Response>
+    public sealed class Handler(ICartRepository repository) : IRequestHandler<Request, Response>
     {
         public async Task<Response> Handle(Request request, CancellationToken ct)
         {
