@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.API.Features.Products;
 
-public static class CreateProduct
+public sealed class CreateProduct
 {
     public sealed record ImageDto(string ImageUrl, bool IsPrimary);
 
