@@ -1,6 +1,6 @@
 ﻿namespace Cart.API.Messages;
 
-public class CartItemAddedEvent(
+public sealed record CartItemAddedEvent(
     Guid CartId,
     Guid ProductId,
     string ProductName,

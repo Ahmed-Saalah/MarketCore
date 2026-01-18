@@ -14,7 +14,7 @@ namespace Cart.API.Features;
 
 public sealed class AddItem
 {
-    public record AddItemDto(
+    public sealed record AddItemDto(
         Guid ProductId,
         string ProductName,
         decimal UnitPrice,
@@ -38,7 +38,7 @@ public sealed class AddItem
         string? PictureUrl
     );
 
-    public record Request(Guid? CartId, Guid? UserId, Guid StoreId, AddItemDto Item)
+    public sealed record Request(Guid? CartId, Guid? UserId, Guid StoreId, AddItemDto Item)
         : IRequest<Response>;
 
     public sealed class Response : Result<CartDto>
@@ -48,7 +48,7 @@ public sealed class AddItem
         public static implicit operator Response(DomainError error) => new() { Error = error };
     }
 
-    public class Validator : AbstractValidator<Request>
+    public sealed class Validator : AbstractValidator<Request>
     {
         public Validator()
         {
@@ -58,7 +58,7 @@ public sealed class AddItem
         }
     }
 
-    internal sealed class Handler(
+    public sealed class Handler(
         ICartRepository repository,
         IValidator<Request> validator,
         IEventPublisher eventPublisher
