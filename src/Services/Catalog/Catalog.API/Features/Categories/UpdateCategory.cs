@@ -15,7 +15,7 @@ public sealed class UpdateCategory
     public sealed record Request(Guid Id, string Name, string Description, Guid? ParentId)
         : IRequest<Result<bool>>;
 
-    public class Validator : AbstractValidator<Request>
+    public sealed class Validator : AbstractValidator<Request>
     {
         public Validator()
         {
@@ -29,7 +29,7 @@ public sealed class UpdateCategory
         }
     }
 
-    public class Handler(CatalogDbContext dbContext, IEventPublisher eventPublisher)
+    public sealed class Handler(CatalogDbContext dbContext, IEventPublisher eventPublisher)
         : IRequestHandler<Request, Result<bool>>
     {
         public async Task<Result<bool>> Handle(Request request, CancellationToken cancellationToken)
@@ -81,7 +81,7 @@ public sealed class UpdateCategory
         }
     }
 
-    public class Endpoint : IEndpoint
+    public sealed class Endpoint : IEndpoint
     {
         public void Map(IEndpointRouteBuilder app)
         {
