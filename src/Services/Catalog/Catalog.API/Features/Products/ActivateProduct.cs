@@ -11,11 +11,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.API.Features.Products;
 
-public static class ActivateProduct
+public sealed class ActivateProduct
 {
     public sealed record Request(Guid Id, Guid StoreId) : IRequest<Result<bool>>;
 
-    public class Handler(CatalogDbContext dbContext, IEventPublisher eventPublisher)
+    public sealed class Handler(CatalogDbContext dbContext, IEventPublisher eventPublisher)
         : IRequestHandler<Request, Result<bool>>
     {
         public async Task<Result<bool>> Handle(Request request, CancellationToken cancellationToken)
@@ -49,7 +49,7 @@ public static class ActivateProduct
         }
     }
 
-    public class Endpoint : IEndpoint
+    public sealed class Endpoint : IEndpoint
     {
         public void Map(IEndpointRouteBuilder app)
         {
