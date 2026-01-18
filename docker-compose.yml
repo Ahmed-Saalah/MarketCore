@@ -23,10 +23,17 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      # - ~/.docker-conf/postgres/data:/var/lib/postgresql/data
       - postgres_data:/var/lib/postgresql/data
     networks:
       - market-network
+
+  redis:
+      image: redis:alpine
+      container_name: market-redis
+      ports:
+        - "6379:6379"
+      networks:
+        - market-network
 
   auth-api:
     image: ${DOCKER_REGISTRY-}authapi
@@ -124,6 +131,30 @@ services:
     networks:
       - market-network
 
+  cart-api:
+    image: ${DOCKER_REGISTRY-}cartapi
+    build:
+      context: .
+      dockerfile: src/Services/Cart/Cart.API/Dockerfile
+    container_name: cart-api
+    ports:
+      - "5005:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=CartDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+      - ConnectionStrings__Redis=redis:6379
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__User=${RABBIT_USER}
+      - RabbitMq__Password=${RABBIT_PASSWORD}
+      - RabbitMq__Exchange=market_event_bus
+      - RabbitMq__Queue=cart-queue
+      - JwtOptions__Secret=${JWT_SECRET}
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - market-network
 
 volumes:
   postgres_data:
