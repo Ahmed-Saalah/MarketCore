@@ -1,6 +1,6 @@
 ﻿namespace Order.API.Messages;
 
-public sealed class OrderCanceledEvent(
+public sealed record OrderCanceledEvent(
     Guid OrderId,
     Guid UserId,
     Guid StoreId,
