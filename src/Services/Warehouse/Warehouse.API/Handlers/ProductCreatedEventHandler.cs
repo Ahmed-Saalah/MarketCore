@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Core.Messaging;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Warehouse.API.Data;
 using Warehouse.API.Entities;
@@ -17,11 +18,13 @@ public sealed class ProductCreatedEventHandler
         Guid CategoryId,
         string? CategoryName,
         DateTime CreatedAt
-    ) : IRequest;
+    );
 
-    public sealed class Handler(WarehouseDbContext dbContext) : IRequestHandler<Event>
+    public sealed class Handler(WarehouseDbContext dbContext) : IEventHandler<Event>
     {
-        public async Task Handle(Event @event, CancellationToken cancellationToken)
+        public async Task Handle(Event @event, CancellationToken cancellationToken) { }
+
+        public async Task HandleAsync(Event @event, CancellationToken cancellationToken = default)
         {
             var exists = await dbContext.Inventory.AnyAsync(
                 i => i.ProductId == @event.ProductId && i.StoreId == @event.StoreId,
