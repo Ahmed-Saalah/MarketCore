@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Order.API.Configuration;
 using Order.API.Data;
 using Order.API.Handlers.Internal;
+using Order.API.Handlers.Payment;
 using Order.API.Handlers.Warehouse;
 using Order.API.Messages;
 
@@ -96,6 +97,16 @@ public static class ServiceExtensions
                 typeof(StockReservationFailedEventHandler.Event),
                 typeof(StockReservationFailedEventHandler.Handler),
                 "Warehouse.StockReservationFailedEvent"
+            ),
+            (
+                typeof(PaymentFailedEventHandler.Event),
+                typeof(PaymentFailedEventHandler.Handler),
+                "Payment.PaymentFailedEvent"
+            ),
+            (
+                typeof(PaymentSucceededEventHandler.Event),
+                typeof(PaymentSucceededEventHandler.Handler),
+                "Payment.PaymentSucceededEvent"
             )
         );
 
