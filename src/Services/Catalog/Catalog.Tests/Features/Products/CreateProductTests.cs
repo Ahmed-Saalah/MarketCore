@@ -24,7 +24,7 @@ public class CreateProductTests
             var dto = CreateValidDto() with { Name = "" };
             var request = new CreateProduct.Request(Guid.NewGuid(), dto);
             var result = _validator.TestValidate(request);
-            result.ShouldHaveValidationErrorFor(x => x.data.Name);
+            result.ShouldHaveValidationErrorFor(x => x.Data.Name);
         }
 
         [Fact]
@@ -33,7 +33,7 @@ public class CreateProductTests
             var dto = CreateValidDto() with { Sku = "AB" };
             var request = new CreateProduct.Request(Guid.NewGuid(), dto);
             var result = _validator.TestValidate(request);
-            result.ShouldHaveValidationErrorFor(x => x.data.Sku);
+            result.ShouldHaveValidationErrorFor(x => x.Data.Sku);
         }
 
         [Fact]
@@ -44,7 +44,7 @@ public class CreateProductTests
 
             var result = _validator.TestValidate(request);
 
-            result.ShouldHaveValidationErrorFor(x => x.data.Price);
+            result.ShouldHaveValidationErrorFor(x => x.Data.Price);
         }
 
         [Fact]

@@ -116,6 +116,7 @@ public sealed class CreateProduct
                     product.Name,
                     product.Description,
                     product.Price,
+                    product.Images.FirstOrDefault(i => i.IsPrimary)?.ImageUrl ?? string.Empty,
                     category.Id,
                     category.Name,
                     product.CreatedAt

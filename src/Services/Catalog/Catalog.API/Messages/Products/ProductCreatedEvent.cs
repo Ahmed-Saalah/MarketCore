@@ -7,6 +7,7 @@ public record ProductCreatedEvent(
     string Name,
     string Description,
     decimal Price,
+    string? PictureUrl,
     Guid CategoryId,
     string? CategoryName,
     DateTime CreatedAt
