@@ -5,5 +5,8 @@ public sealed class OrderCanceledEvent(
     Guid UserId,
     Guid StoreId,
     decimal Total,
-    string Reason
+    string Reason,
+    List<OrderCanceledItemDto> Items
 );
+
+public sealed record OrderCanceledItemDto(Guid ProductId, int Quantity);

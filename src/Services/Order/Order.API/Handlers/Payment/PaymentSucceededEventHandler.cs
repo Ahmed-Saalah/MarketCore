@@ -1,4 +1,5 @@
 ﻿using Core.Messaging;
+using Microsoft.EntityFrameworkCore;
 using Order.API.Constants;
 using Order.API.Data;
 using Order.API.Messages;
@@ -27,7 +28,9 @@ public sealed class PaymentSucceededEventHandler
                 @event.OrderId
             );
 
-            var order = await dbContext.Orders.FindAsync([@event.OrderId], cancellationToken);
+            var order = await dbContext
+                .Orders.Include(o => o.Items)
+                .FirstOrDefaultAsync(o => o.Id == @event.OrderId, cancellationToken);
 
             if (order == null)
             {
@@ -45,7 +48,15 @@ public sealed class PaymentSucceededEventHandler
             logger.LogInformation("Order {OrderId} is now PAID and COMPLETED.", @event.OrderId);
 
             await eventPublisher.PublishAsync(
-                new OrderCompletedEvent(@event.OrderId, order.UserId, order.StoreId, order.Total),
+                new OrderCompletedEvent(
+                    @event.OrderId,
+                    order.UserId,
+                    order.StoreId,
+                    order.Total,
+                    order
+                        .Items.Select(i => new OrderCompletedItemDto(i.ProductId, i.Quantity))
+                        .ToList()
+                ),
                 "Order.OrderCompletedEvent",
                 cancellationToken
             );

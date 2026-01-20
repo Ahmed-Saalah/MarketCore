@@ -1,4 +1,5 @@
 ﻿using Core.Messaging;
+using Microsoft.EntityFrameworkCore;
 using Order.API.Constants;
 using Order.API.Data;
 using Order.API.Messages;
@@ -23,7 +24,9 @@ public sealed class PaymentFailedEventHandler
                 @event.Reason
             );
 
-            var order = await dbContext.Orders.FindAsync([@event.OrderId], cancellationToken);
+            var order = await dbContext
+                .Orders.Include(o => o.Items)
+                .FirstOrDefaultAsync(o => o.Id == @event.OrderId, cancellationToken);
 
             if (order == null)
             {
@@ -49,7 +52,10 @@ public sealed class PaymentFailedEventHandler
                     order.UserId,
                     order.StoreId,
                     order.Total,
-                    @event.Reason
+                    @event.Reason,
+                    order
+                        .Items.Select(i => new OrderCanceledItemDto(i.ProductId, i.Quantity))
+                        .ToList()
                 ),
                 "Order.OrderCanceledEvent",
                 cancellationToken
