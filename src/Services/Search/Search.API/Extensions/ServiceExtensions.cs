@@ -1,6 +1,5 @@
 ﻿using Core.Messaging;
 using Core.Messaging.Options;
-using FluentValidation;
 using Search.API.Handlers.Catalog;
 
 namespace Search.API.Extensions;
@@ -33,7 +32,7 @@ public static class ServiceExtensions
             (
                 typeof(ProductActivatedEventHandler.Event),
                 typeof(ProductActivatedEventHandler.Handler),
-                "Catalog.ProductCreatedEvent"
+                "Catalog.ProductActivatedEvent"
             ),
             (
                 typeof(ProductDeactivatedEventHandler.Event),

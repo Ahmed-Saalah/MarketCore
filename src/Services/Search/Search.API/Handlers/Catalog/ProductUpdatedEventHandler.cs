@@ -1,4 +1,5 @@
-﻿using Elastic.Clients.Elasticsearch;
+﻿using Core.Messaging;
+using Elastic.Clients.Elasticsearch;
 using MediatR;
 using Search.API.Models;
 
@@ -13,11 +14,11 @@ public sealed class ProductUpdatedEventHandler
         decimal Price,
         string Sku,
         Guid StoreId
-    ) : IRequest;
+    );
 
-    public sealed class Handler(ElasticsearchClient client) : IRequestHandler<Event>
+    public sealed class Handler(ElasticsearchClient client) : IEventHandler<Event>
     {
-        public async Task Handle(Event @event, CancellationToken cancellationToken)
+        public async Task HandleAsync(Event @event, CancellationToken cancellationToken)
         {
             await client.UpdateAsync<Product, object>(
                 new UpdateRequest<Product, object>(index: "products", id: new Id(@event.Id))

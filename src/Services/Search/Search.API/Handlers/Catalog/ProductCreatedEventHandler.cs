@@ -1,4 +1,5 @@
-﻿using Elastic.Clients.Elasticsearch;
+﻿using Core.Messaging;
+using Elastic.Clients.Elasticsearch;
 using MediatR;
 using Search.API.Models;
 
@@ -17,11 +18,11 @@ public sealed class ProductCreatedEventHandler
         Guid CategoryId,
         string? CategoryName,
         DateTime CreatedAt
-    ) : IRequest;
+    );
 
-    public sealed class Handler(ElasticsearchClient client) : IRequestHandler<Event>
+    public sealed class Handler(ElasticsearchClient client) : IEventHandler<Event>
     {
-        public async Task Handle(Event @event, CancellationToken cancellationToken)
+        public async Task HandleAsync(Event @event, CancellationToken cancellationToken)
         {
             var product = new Product
             {
