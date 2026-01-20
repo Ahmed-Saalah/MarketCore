@@ -158,7 +158,7 @@ public sealed class AddItem
         public void Map(IEndpointRouteBuilder app)
         {
             app.MapPost(
-                    "/api/cart/items",
+                    "/api/carts/items",
                     async (
                         AddItemDto dto,
                         Guid? cartId,

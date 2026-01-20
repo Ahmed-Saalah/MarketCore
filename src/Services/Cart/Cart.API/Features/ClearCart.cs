@@ -57,7 +57,7 @@ public sealed class ClearCart
         public void Map(IEndpointRouteBuilder app)
         {
             app.MapDelete(
-                    "/api/cart/{cartId}/clear",
+                    "/api/carts/{cartId}/clear",
                     async (
                         [FromRoute] Guid cartId,
                         [FromRoute] Guid productId,

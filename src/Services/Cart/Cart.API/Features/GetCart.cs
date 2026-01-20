@@ -77,7 +77,7 @@ public sealed class GetCart
         public void Map(IEndpointRouteBuilder app)
         {
             app.MapGet(
-                    "/api/cart",
+                    "/api/carts",
                     async (Guid? cartId, IMediator mediator, ClaimsPrincipal user) =>
                     {
                         var userId = user.GetUserId();

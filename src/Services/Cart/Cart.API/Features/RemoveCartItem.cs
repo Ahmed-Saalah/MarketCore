@@ -70,7 +70,7 @@ public sealed class RemoveItem
         public void Map(IEndpointRouteBuilder app)
         {
             app.MapDelete(
-                    "/api/cart/{cartId}/items/{productId:guid}",
+                    "/api/carts/{cartId}/items/{productId:guid}",
                     async (
                         [FromRoute] Guid cartId,
                         [FromRoute] Guid productId,

@@ -117,7 +117,7 @@ public sealed class UpdateCartItem
         public void Map(IEndpointRouteBuilder app)
         {
             app.MapPut(
-                    "/api/cart/{cartId}/items",
+                    "/api/carts/{cartId}/items",
                     async (
                         [FromRoute] Guid cartId,
                         [FromBody] RequestDto data,
