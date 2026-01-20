@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.API.Features.Products;
 
-public static class UpdateProduct
+public sealed class UpdateProduct
 {
     public sealed record ImageDto(string ImageUrl, bool IsPrimary);
 
@@ -42,7 +42,7 @@ public static class UpdateProduct
         }
     }
 
-    public class Handler(CatalogDbContext dbContext, IEventPublisher eventPublisher)
+    public sealed class Handler(CatalogDbContext dbContext, IEventPublisher eventPublisher)
         : IRequestHandler<Request, Result<bool>>
     {
         public async Task<Result<bool>> Handle(Request request, CancellationToken cancellationToken)
@@ -102,7 +102,7 @@ public static class UpdateProduct
                     product.Sku,
                     product.StoreId
                 ),
-                "Catalog.Product.ProductUpdatedEvent",
+                "Catalog.ProductUpdatedEvent",
                 cancellationToken
             );
 

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.API.Features.Products;
 
-public static class DeactivateProduct
+public sealed class DeactivateProduct
 {
     public sealed record Request(Guid Id, Guid StoreId) : IRequest<Result<bool>>;
 
@@ -41,7 +41,7 @@ public static class DeactivateProduct
 
             await eventPublisher.PublishAsync(
                 new ProductDeactivatedEvent(product.Id, DateTime.UtcNow),
-                "Catalog.Product.ProductDeactivatedEvent",
+                "Catalog.ProductDeactivatedEvent",
                 cancellationToken
             );
 

@@ -74,7 +74,7 @@ public sealed class UpdateCategory
                     category.ParentId,
                     DateTime.UtcNow
                 ),
-                "catalog.category.updated",
+                "Catalog.CategoryUpdatedEvent",
                 cancellationToken
             );
             return true;

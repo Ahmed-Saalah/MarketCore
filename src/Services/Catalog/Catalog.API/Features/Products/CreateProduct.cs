@@ -30,16 +30,16 @@ public sealed class CreateProduct
         List<AttributeDto> Attributes
     );
 
-    public sealed record Request(Guid StoreId, RequestDto data) : IRequest<Result<Guid>>;
+    public sealed record Request(Guid StoreId, RequestDto Data) : IRequest<Result<Guid>>;
 
     public sealed class Validator : AbstractValidator<Request>
     {
         public Validator()
         {
-            RuleFor(x => x.data.Name).NotEmpty();
-            RuleFor(x => x.data.Sku).NotEmpty().MinimumLength(3);
-            RuleFor(x => x.data.Price).GreaterThan(0);
-            RuleFor(x => x.data.CategoryId).NotEmpty();
+            RuleFor(x => x.Data.Name).NotEmpty();
+            RuleFor(x => x.Data.Sku).NotEmpty().MinimumLength(3);
+            RuleFor(x => x.Data.Price).GreaterThan(0);
+            RuleFor(x => x.Data.CategoryId).NotEmpty();
             RuleFor(x => x.StoreId).NotEmpty();
         }
     }
@@ -50,7 +50,7 @@ public sealed class CreateProduct
         public async Task<Result<Guid>> Handle(Request request, CancellationToken cancellationToken)
         {
             var skuExists = await dbContext.Products.AnyAsync(
-                p => p.Sku == request.data.Sku,
+                p => p.Sku == request.Data.Sku,
                 cancellationToken
             );
 
@@ -60,7 +60,7 @@ public sealed class CreateProduct
             }
 
             var category = await dbContext.Categories.FirstOrDefaultAsync(
-                c => c.Id == request.data.CategoryId,
+                c => c.Id == request.Data.CategoryId,
                 cancellationToken
             );
 
@@ -73,20 +73,20 @@ public sealed class CreateProduct
             {
                 Id = Guid.NewGuid(),
                 StoreId = request.StoreId,
-                CategoryId = request.data.CategoryId,
-                Name = request.data.Name,
-                Description = request.data.Description,
-                Sku = request.data.Sku,
-                Price = request.data.Price,
-                Currency = request.data.Currency,
+                CategoryId = request.Data.CategoryId,
+                Name = request.Data.Name,
+                Description = request.Data.Description,
+                Sku = request.Data.Sku,
+                Price = request.Data.Price,
+                Currency = request.Data.Currency,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow,
             };
 
-            if (request.data.Images.Any())
+            if (request.Data.Images.Any())
             {
                 product.Images = request
-                    .data.Images.Select(i => new ProductImage
+                    .Data.Images.Select(i => new ProductImage
                     {
                         ImageUrl = i.ImageUrl,
                         IsPrimary = i.IsPrimary,
@@ -94,10 +94,10 @@ public sealed class CreateProduct
                     .ToList();
             }
 
-            if (request.data.Attributes.Any())
+            if (request.Data.Attributes.Any())
             {
                 product.Attributes = request
-                    .data.Attributes.Select(a => new ProductAttribute
+                    .Data.Attributes.Select(a => new ProductAttribute
                     {
                         Key = a.Key,
                         Value = a.Value,
@@ -120,7 +120,7 @@ public sealed class CreateProduct
                     category.Name,
                     product.CreatedAt
                 ),
-                "Catalog.Product.ProductCreatedEvent",
+                "Catalog.ProductCreatedEvent",
                 cancellationToken
             );
 

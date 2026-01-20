@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.API.Features.Categories;
 
-public static class DeactivateCategory
+public sealed class DeactivateCategory
 {
     public record Request(Guid Id) : IRequest<Result<bool>>;
 

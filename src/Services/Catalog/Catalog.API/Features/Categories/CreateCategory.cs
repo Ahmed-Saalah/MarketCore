@@ -64,7 +64,7 @@ public sealed class CreateCategory
                     category.ParentId,
                     category.CreatedAt
                 ),
-                routingKey: "catalog.category.created",
+                routingKey: "Catalog.CategoryCreatedEvent",
                 cancellationToken
             );
 

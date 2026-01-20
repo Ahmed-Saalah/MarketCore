@@ -45,7 +45,7 @@ public sealed class ActivateCategory
                     RootCategoryId: request.Id,
                     AllActivatedCategoryIds: idsToAactivate.ToList()
                 ),
-                routingKey: "catalog.category.Activated",
+                routingKey: "Catalog.CategoryActivatedEvent",
                 cancellationToken
             );
 
