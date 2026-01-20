@@ -28,12 +28,38 @@ services:
       - market-network
 
   redis:
-      image: redis:alpine
-      container_name: market-redis
-      ports:
-        - "6379:6379"
-      networks:
-        - market-network
+    image: redis:alpine
+    container_name: market-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - market-network
+
+  elasticsearch:
+    image: elasticsearch:8.11.1
+    container_name: market-elastic
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
+    networks:
+      - market-network
+
+  kibana:
+    image: kibana:8.11.1
+    container_name: market-kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - market-network
 
   auth-api:
     image: ${DOCKER_REGISTRY-}authapi
@@ -153,11 +179,85 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+      - redis
+    networks:
+      - market-network
+
+  order-api:
+    image: ${DOCKER_REGISTRY-}orderapi
+    build:
+      context: .
+      dockerfile: src/Services/Order/Order.API/Dockerfile
+    container_name: order-api
+    ports:
+      - "5006:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=OrderDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__User=${RABBIT_USER}
+      - RabbitMq__Password=${RABBIT_PASSWORD}
+      - RabbitMq__Exchange=market_event_bus
+      - RabbitMq__Queue=order-queue
+      - JwtOptions__Secret=${JWT_SECRET}
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - market-network
+
+  warehouse-api:
+    image: ${DOCKER_REGISTRY-}warehouseapi
+    build:
+      context: .
+      dockerfile: src/Services/Warehouse/Warehouse.API/Dockerfile
+    container_name: warehouse-api
+    ports:
+      - "5007:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=WarehouseDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__User=${RABBIT_USER}
+      - RabbitMq__Password=${RABBIT_PASSWORD}
+      - RabbitMq__Exchange=market_event_bus
+      - RabbitMq__Queue=warehouse-queue
+      - JwtOptions__Secret=${JWT_SECRET}
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - market-network
+
+  search-api:
+    image: ${DOCKER_REGISTRY-}searchapi
+    build:
+      context: .
+      dockerfile: src/Services/Search/Search.API/Dockerfile
+    container_name: search-api
+    ports:
+      - "5008:8080"
+    environment:
+      - ElasticSettings__Uri=http://elasticsearch:9200
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__User=${RABBIT_USER}
+      - RabbitMq__Password=${RABBIT_PASSWORD}
+      - RabbitMq__Exchange=market_event_bus
+      - RabbitMq__Queue=search-queue
+      - JwtOptions__Secret=${JWT_SECRET}
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+    depends_on:
+      - elasticsearch
+      - rabbitmq
     networks:
       - market-network
 
 volumes:
   postgres_data:
+  elastic_data:
 
 networks:
   market-network:
