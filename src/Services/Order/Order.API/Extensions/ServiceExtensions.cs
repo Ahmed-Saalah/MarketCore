@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Order.API.Configuration;
 using Order.API.Data;
 using Order.API.Handlers.Internal;
+using Order.API.Handlers.Warehouse;
 using Order.API.Messages;
 
 namespace Order.API.Extensions;
@@ -81,10 +82,20 @@ public static class ServiceExtensions
         services.AddMessageBroker();
 
         services.AddRabbitMqEventConsumer(
-            events: (
+            (
                 typeof(OrderCreatedEvent),
                 typeof(OrderCreateEventHandler.Handler),
                 "Order.OrderCreatedEvent"
+            ),
+            (
+                typeof(StockReservedEventHandler.Event),
+                typeof(StockReservedEventHandler.Handler),
+                "Warehouse.StockReservedEvent"
+            ),
+            (
+                typeof(StockReservationFailedEventHandler.Event),
+                typeof(StockReservationFailedEventHandler.Handler),
+                "Warehouse.StockReservationFailedEvent"
             )
         );
 

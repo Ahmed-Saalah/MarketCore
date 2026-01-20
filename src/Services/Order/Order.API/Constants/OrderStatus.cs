@@ -8,4 +8,5 @@ public sealed class OrderStatus
     public const string Failed = "Failed";
     public const string Paid = "Paid";
     public const string PaymentFailed = "PaymentFailed";
+    public const string PendingPayment = "PendingPayment";
 }
