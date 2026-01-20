@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Payment.API.Configuration;
 using Payment.API.Data;
+using Payment.API.Handler.Order;
 using Payment.API.Services;
 
 namespace Payment.API.Extensions;
@@ -74,7 +75,13 @@ public static class ServiceExtensions
         services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
 
         services.AddMessageBroker();
-
+        services.AddRabbitMqEventConsumer(
+            (
+                typeof(CreatePaymentCommandHandler.Command),
+                typeof(CreatePaymentCommandHandler.Handler),
+                "Order.CreatePaymentCommand"
+            )
+        );
         return services;
     }
 }
