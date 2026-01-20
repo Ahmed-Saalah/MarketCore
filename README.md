@@ -21,10 +21,10 @@ The system follows a strict **Event-Driven Architecture** combined with the **Da
 * **Distributed Caching (Redis)** 
 * **Full-Text Search (Elasticsearch)**
 * **API Gateway (YARP)**
-* **Mediator**
 
 ### Building Blocks
 * **Core.Messaging**: A custom abstraction over MassTransit that standardizes event publishing, consumer registration, and routing conventions.
+* **Core.Domain**: A shared library containing the Result pattern and standardized Domain Errors for consistent error handling across services.
 ---
 
 ## Tech Stack
@@ -33,7 +33,7 @@ The system follows a strict **Event-Driven Architecture** combined with the **Da
 * **Database:** PostgreSQL (Entity Framework Core)
 * **Messaging:** RabbitMQ (MassTransit / Custom Wrapper)
 * **Caching:** Redis (Distributed Caching)
-* **Search Engine:** Elasticsearch (Full-text Search & Catalog Indexing)
+* **Search Engine:** Elasticsearch (Full-text Search, Suggestions, & Faceting)
 * **Gateway**: YARP (Yet Another Reverse Proxy)
 * **Validation:** FluentValidation
 * **Testing:** xUnit, Moq, FluentAssertions, InMemoryDB
@@ -48,13 +48,12 @@ The system follows a strict **Event-Driven Architecture** combined with the **Da
 | **Auth Service** | Authentication, authorization, JWT handling |
 | **Customer Service** | Customer profiles, preferences, identity data |
 | **Store Service** | Store management and ownership |
-| **Product Service** | Product, pricing, availability |
-| **Category Service** | Product categorization  |
+| **Catalog Service** | Manages products, categories, pricing, and catalog organization |
 | **Search Service** | Full-text search and indexing (Elasticsearch) |
-| **Cart Service** | Shopping cart lifecycle |
+| **Cart Service** | Shopping cart lifecycle (Redis-backed) |
 | **Order Service** | Order creation, tracking, and lifecycle |
 | **Payment Service** | Payment processing and status tracking |
-| **Warehouse Service** | Inventory and stock management |
+| **Warehouse Service** | Inventory stock levels and reservation |
 | **Notification Service** | Email / event-based notifications |
 
 ---
@@ -78,18 +77,28 @@ MarketCore relies on several infrastructure services that are provisioned using 
 ```bash
 docker-compose up -d
 ```
+This spins up Postgres, RabbitMQ, Redis, Elasticsearch, and Kibana.
+
 2. Apply Database Migrations
    
 Navigate to each service that uses a database and run:
 e.g,
 ```bash
 dotnet ef database update --project src/Services/Auth/Auth.API
+dotnet ef database update --project src/Services/Catalog/Catalog.API
+# Repeat for other services...
 ```
+
 3. Run Unit Tests
 ```bash
 dotnet test
 ```
-4. Run the Services
-```
- dotnet run
-```
+
+4. Access the Application:
+   
+   APIs: Accessible via localhost ports (e.g., Catalog: 5004, Cart: 5005, Search: 5008)
+
+   Kibana (Search Dashboard): http://localhost:5601
+
+   RabbitMQ Dashboard: http://localhost:15672
+
