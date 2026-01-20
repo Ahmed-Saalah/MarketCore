@@ -1,5 +1,7 @@
-﻿using Catalog.API.Data;
+﻿using System.Security.Claims;
+using Catalog.API.Data;
 using Catalog.API.Entities.Products;
+using Core.Domain.Abstractions;
 using Core.Domain.Errors;
 using Core.Domain.Response;
 using FluentValidation;
@@ -44,6 +46,22 @@ public sealed class GetProductById
                 .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
 
             return product is not null ? product : new NotFound("Product not found");
+        }
+    }
+
+    public class Endpoint : IEndpoint
+    {
+        public void Map(IEndpointRouteBuilder app)
+        {
+            app.MapPut(
+                    "api/products/{id:guid}",
+                    async (Guid id, IMediator mediator) =>
+                    {
+                        var result = await mediator.Send(new Request(id));
+                        return result.ToHttpResult();
+                    }
+                )
+                .WithTags("Products");
         }
     }
 }
