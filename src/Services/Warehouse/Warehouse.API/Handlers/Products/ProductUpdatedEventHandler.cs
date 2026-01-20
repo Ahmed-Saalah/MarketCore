@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Warehouse.API.Data;
 
-namespace Warehouse.API.Handlers;
+namespace Warehouse.API.Handlers.Products;
 
 public sealed class ProductUpdatedEventHandler
 {

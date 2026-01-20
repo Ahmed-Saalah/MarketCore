@@ -5,10 +5,11 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Warehouse.API.Commands;
 using Warehouse.API.Configuration;
 using Warehouse.API.Data;
-using Warehouse.API.Handlers;
+using Warehouse.API.Handlers.Orders.Commands;
+using Warehouse.API.Handlers.Orders.Events;
+using Warehouse.API.Handlers.Products;
 
 namespace Warehouse.API.Extensions;
 
@@ -90,6 +91,16 @@ public static class ServiceExtensions
                 typeof(ReserveStockCommandHandler.Command),
                 typeof(ReserveStockCommandHandler.Handler),
                 "Order.ReserveStockCommand"
+            ),
+            (
+                typeof(OrderCompletedEventHandler.Event),
+                typeof(OrderCompletedEventHandler.Handler),
+                "Order.OrderCompletedEvent"
+            ),
+            (
+                typeof(OrderCanceledEventHandler.Event),
+                typeof(OrderCanceledEventHandler.Handler),
+                "Order.OrderCanceledEventHandler"
             )
         );
 

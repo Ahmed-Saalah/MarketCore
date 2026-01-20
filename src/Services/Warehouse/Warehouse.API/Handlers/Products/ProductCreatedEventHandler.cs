@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Warehouse.API.Data;
 using Warehouse.API.Entities;
 
-namespace Warehouse.API.Handlers;
+namespace Warehouse.API.Handlers.Products;
 
 public sealed class ProductCreatedEventHandler
 {

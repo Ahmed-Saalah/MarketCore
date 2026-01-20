@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Warehouse.API.Data;
 using Warehouse.API.Messages;
 
-namespace Warehouse.API.Commands;
+namespace Warehouse.API.Handlers.Orders.Commands;
 
 public sealed class ReserveStockCommandHandler
 {
