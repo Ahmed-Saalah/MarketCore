@@ -2,6 +2,7 @@
 using System.Text;
 using Cart.API.Configuration;
 using Cart.API.Data;
+using Cart.API.Handler.Order;
 using Core.Messaging;
 using Core.Messaging.Options;
 using FluentValidation;
@@ -76,7 +77,17 @@ public static class ServiceExtensions
     )
     {
         services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
+
         services.AddMessageBroker();
+
+        services.AddRabbitMqEventConsumer(
+            (
+                typeof(OrderCompletedEventHandler.Event),
+                typeof(OrderCompletedEventHandler.Handler),
+                "Order.OrderCompletedEvent"
+            )
+        );
+
         return services;
     }
 }
