@@ -60,6 +60,17 @@ services:
       - elasticsearch
     networks:
       - market-network
+  
+  stripe-cli:
+    image: stripe/stripe-cli
+    container_name: market-stripe-cli
+    command: listen --forward-to http://payment-api:8080/api/webhooks --api-key ${STRIPE_SECRET_KEY}
+    environment:
+      - STRIPE_API_KEY=${STRIPE_SECRET_KEY}
+    depends_on:
+      - payment-api
+    networks:
+      - market-network
 
   auth-api:
     image: ${DOCKER_REGISTRY-}authapi
@@ -251,6 +262,61 @@ services:
       - JwtOptions__Audience=${JWT_AUDIENCE}
     depends_on:
       - elasticsearch
+      - rabbitmq
+    networks:
+      - market-network
+
+  payment-api:
+    image: ${DOCKER_REGISTRY-}paymentapi
+    build:
+      context: .
+      dockerfile: src/Services/Payment/Payment.API/Dockerfile
+    container_name: payment-api
+    ports:
+      - "5009:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=PaymentDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__User=${RABBIT_USER}
+      - RabbitMq__Password=${RABBIT_PASSWORD}
+      - RabbitMq__Exchange=market_event_bus
+      - RabbitMq__Queue=payment-queue
+      - JwtOptions__Secret=${JWT_SECRET}
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+      - Stripe__SecretKey=${STRIPE_SECRET_KEY}
+      - Stripe__PublishableKey=${STRIPE_PUBLISHABLE_KEY}
+      - Stripe__WebhookSecret=${STRIPE_WEBHOOK_SECRET}
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - market-network
+
+  notification-api:
+    image: ${DOCKER_REGISTRY-}notificationapi
+    build:
+      context: .
+      dockerfile: src/Services/Notification/Notification.API/Dockerfile
+    container_name: notification-api
+    ports:
+      - "5010:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=NotificationDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__User=${RABBIT_USER}
+      - RabbitMq__Password=${RABBIT_PASSWORD}
+      - RabbitMq__Exchange=market_event_bus
+      - RabbitMq__Queue=notification-queue
+      - JwtOptions__Secret=${JWT_SECRET}
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+      - Smtp__Host=${SMTP_HOST}
+      - Smtp__Port=${SMTP_PORT}
+      - Smtp__Username=${SMTP_USER}
+      - Smtp__Password=${SMTP_PASS}
+    depends_on:
+      - postgres
       - rabbitmq
     networks:
       - market-network
