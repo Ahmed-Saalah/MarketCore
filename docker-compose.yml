@@ -315,9 +315,11 @@ services:
       - Smtp__Port=${SMTP_PORT}
       - Smtp__Username=${SMTP_USER}
       - Smtp__Password=${SMTP_PASS}
+      - ApiUrls__CustomerApi=http://customer-api:8080
     depends_on:
       - postgres
       - rabbitmq
+      - customer-api
     networks:
       - market-network
 
