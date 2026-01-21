@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Notification.API.Entities;
 
 namespace Notification.API.Data;
 
@@ -8,13 +7,13 @@ public class NotificationDbContext : DbContext
     public NotificationDbContext(DbContextOptions<NotificationDbContext> options)
         : base(options) { }
 
-    public DbSet<NotificationLog> Notifications { get; set; }
+    public DbSet<Entities.Notification> Notifications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<NotificationLog>(entity =>
+        modelBuilder.Entity<Entities.Notification>(entity =>
         {
             entity.HasKey(e => e.Id);
 

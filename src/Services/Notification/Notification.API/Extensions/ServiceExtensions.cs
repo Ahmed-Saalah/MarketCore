@@ -2,6 +2,8 @@
 using Core.Messaging.Options;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Notification.API.Clients.Customer;
+using Notification.API.Clients.Customer.Interfaces;
 using Notification.API.Configuration;
 using Notification.API.Data;
 using Notification.API.Services.Implementation;
@@ -22,6 +24,13 @@ public static class ServiceExtensions
         );
 
         services.Configure<SmtpOptions>(configuration.GetSection(SmtpOptions.SectionName));
+
+        services.AddHttpClient<ICustomerApiClient, CustomerApiClient>(client =>
+        {
+            var url = configuration["ApiUrls:CustomerApi"];
+            client.BaseAddress = new Uri(url);
+            client.Timeout = TimeSpan.FromSeconds(5);
+        });
 
         return services;
     }

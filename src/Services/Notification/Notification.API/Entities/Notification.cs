@@ -1,6 +1,6 @@
 ﻿namespace Notification.API.Entities;
 
-public class NotificationLog
+public class Notification
 {
     public Guid Id { get; set; }
 
