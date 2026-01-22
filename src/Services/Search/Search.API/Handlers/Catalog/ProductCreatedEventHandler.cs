@@ -33,6 +33,7 @@ public sealed class ProductCreatedEventHandler
                 PictureUrl = @event.PictureUrl,
                 StoreId = @event.StoreId,
                 IsActive = true,
+                StockStatus = "OutOfStock",
             };
 
             await client.IndexAsync(product, idx => idx.Index("products"), cancellationToken);

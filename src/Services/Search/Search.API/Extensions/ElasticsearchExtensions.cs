@@ -9,9 +9,9 @@ public static class ElasticsearchExtensions
         services.AddSingleton(sp =>
         {
             var configuration = sp.GetRequiredService<IConfiguration>();
-            var uriString = configuration["ElasticSettings:Uri"] ?? "http://localhost:9200";
+            var uriString = configuration["ElasticSettings:Uri"];
 
-            var settings = new ElasticsearchClientSettings(new Uri(uriString))
+            var settings = new ElasticsearchClientSettings(new Uri(uriString!))
                 .DefaultIndex("products")
                 // .DisableDirectStreaming()
                 .ThrowExceptions();
