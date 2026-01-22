@@ -26,7 +26,5 @@ public sealed class StockReservationFailedEventHandler
         }
     }
 
-    public sealed record Event(Guid OrderId, Guid StoreId, string Reason, List<Item> Items);
-
-    public sealed record Item(Guid ProductId, int Quantity);
+    public sealed record Event(Guid OrderId, Guid StoreId, string Reason);
 }
