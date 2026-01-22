@@ -2,7 +2,7 @@
 using Core.Messaging;
 using Notification.API.Clients.Customer.Interfaces;
 using Notification.API.Data;
-using Notification.API.Services.Interfaces;
+using Notification.API.Services.Smtp;
 
 namespace Notification.API.Handlers.Order;
 

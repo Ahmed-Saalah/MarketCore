@@ -1,4 +1,4 @@
-﻿namespace Notification.API.Services.Interfaces;
+﻿namespace Notification.API.Services.Smtp;
 
 public interface IEmailSender
 {

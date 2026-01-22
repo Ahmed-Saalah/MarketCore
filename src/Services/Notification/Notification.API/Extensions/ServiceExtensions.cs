@@ -8,7 +8,7 @@ using Notification.API.Configuration;
 using Notification.API.Data;
 using Notification.API.Handlers.Order;
 using Notification.API.Services.Implementation;
-using Notification.API.Services.Interfaces;
+using Notification.API.Services.Smtp;
 
 namespace Notification.API.Extensions;
 

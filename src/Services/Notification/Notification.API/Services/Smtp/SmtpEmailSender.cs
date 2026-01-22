@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using MimeKit;
 using Notification.API.Configuration;
-using Notification.API.Services.Interfaces;
+using Notification.API.Services.Smtp;
 
 namespace Notification.API.Services.Implementation;
 
