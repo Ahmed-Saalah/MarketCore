@@ -1,6 +1,6 @@
 ﻿using Core.Messaging;
 using Elastic.Clients.Elasticsearch;
-using MediatR;
+using Search.API.Constants;
 using Search.API.Models;
 
 namespace Search.API.Handlers.Catalog;
@@ -33,7 +33,7 @@ public sealed class ProductCreatedEventHandler
                 PictureUrl = @event.PictureUrl,
                 StoreId = @event.StoreId,
                 IsActive = true,
-                StockStatus = "OutOfStock",
+                StockStatus = StockStatus.OutOfStock,
             };
 
             await client.IndexAsync(product, idx => idx.Index("products"), cancellationToken);
