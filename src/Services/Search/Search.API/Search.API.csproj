@@ -32,8 +32,4 @@
     <ProjectReference Include="..\..\..\BuildingBlocks\Core.Domain\Core.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Handlers\Warehouse\" />
-  </ItemGroup>
-
 </Project>

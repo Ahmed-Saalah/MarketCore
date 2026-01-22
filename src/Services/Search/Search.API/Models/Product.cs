@@ -9,4 +9,5 @@ public class Product
     public string? PictureUrl { get; set; }
     public Guid StoreId { get; set; }
     public bool IsActive { get; set; }
+    public string StockStatus { get; set; }
 }
