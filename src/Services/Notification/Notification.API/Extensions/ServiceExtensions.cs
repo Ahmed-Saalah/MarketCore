@@ -6,6 +6,7 @@ using Notification.API.Clients.Customer;
 using Notification.API.Clients.Customer.Interfaces;
 using Notification.API.Configuration;
 using Notification.API.Data;
+using Notification.API.Handlers.Order;
 using Notification.API.Services.Implementation;
 using Notification.API.Services.Interfaces;
 
@@ -54,6 +55,23 @@ public static class ServiceExtensions
 
         services.AddMessageBroker();
 
+        services.AddRabbitMqEventConsumer(
+            (
+                typeof(OrderCreatedEventHandler.Event),
+                typeof(OrderCreatedEventHandler.Handler),
+                "Order.OrderCreatedEvent"
+            ),
+            (
+                typeof(OrderCanceledEventHandler.Event),
+                typeof(OrderCanceledEventHandler.Handler),
+                "Order.OrderCanceledEvent"
+            ),
+            (
+                typeof(OrderCompletedEventHandler.Event),
+                typeof(OrderCompletedEventHandler.Handler),
+                "Order.OrderCompletedEvent"
+            )
+        );
         return services;
     }
 }
