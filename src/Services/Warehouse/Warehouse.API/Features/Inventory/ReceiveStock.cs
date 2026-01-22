@@ -65,8 +65,9 @@ public sealed class ReceiveStock
                 return new ResponseDto(inventory.Id, inventory.QuantityOnHand);
             }
 
+            int previousQuantity = inventory.QuantityOnHand;
             inventory.QuantityOnHand += request.Quantity;
-
+            var now = DateTime.UtcNow;
             var transaction = new StockTransaction
             {
                 Id = Guid.NewGuid(),
@@ -75,7 +76,7 @@ public sealed class ReceiveStock
                 Type = TransactionType.Restock,
                 QuantityChanged = request.Quantity,
                 ReferenceId = request.ReferenceNumber,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = now,
             };
 
             dbContext.StockTransactions.Add(transaction);
@@ -90,11 +91,25 @@ public sealed class ReceiveStock
                     QuantityAdded: request.Quantity,
                     NewQuantityOnHand: inventory.QuantityOnHand,
                     ReferenceNumber: request.ReferenceNumber,
-                    OccurredOn: DateTime.UtcNow
+                    OccurredOn: now
                 ),
                 "Warehouse.InventoryUpdatedEvent",
                 ct
             );
+
+            if (previousQuantity <= 0 && inventory.QuantityOnHand > 0)
+            {
+                await eventPublisher.PublishAsync(
+                    new ProductBackInStockEvent(
+                        ProductId: inventory.ProductId,
+                        StoreId: inventory.StoreId,
+                        InventoryId: inventory.Id,
+                        Timestamp: now
+                    ),
+                    "Warehouse.ProductBackInStockEvent",
+                    ct
+                );
+            }
 
             return new ResponseDto(inventory.Id, inventory.QuantityOnHand);
         }
