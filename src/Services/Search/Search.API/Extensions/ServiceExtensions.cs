@@ -1,6 +1,7 @@
 ﻿using Core.Messaging;
 using Core.Messaging.Options;
 using Search.API.Handlers.Catalog;
+using Search.API.Handlers.Warehouse;
 
 namespace Search.API.Extensions;
 
@@ -43,6 +44,21 @@ public static class ServiceExtensions
                 typeof(ProductUpdatedEventHandler.Event),
                 typeof(ProductUpdatedEventHandler.Handler),
                 "Catalog.ProductUpdatedEvent"
+            ),
+            (
+                typeof(ProductOutOfStockEventHandler.Event),
+                typeof(ProductOutOfStockEventHandler.Handler),
+                "Warehouse.ProductOutOfStockEvent"
+            ),
+            (
+                typeof(ProductLowStockEventHandler.Event),
+                typeof(ProductLowStockEventHandler.Handler),
+                "Warehouse.ProductLowStockEvent"
+            ),
+            (
+                typeof(ProductBackInStockEventHandler.Event),
+                typeof(ProductBackInStockEventHandler.Handler),
+                "Warehouse.ProductBackInStockEvent"
             )
         );
 
