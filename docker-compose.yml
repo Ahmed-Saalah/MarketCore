@@ -323,6 +323,30 @@ services:
     networks:
       - market-network
 
+  yarp-gateway:
+    image: ${DOCKER_REGISTRY-}apigateway
+    build:
+      context: .
+      dockerfile: src/ApiGateways/ApiGateway/Dockerfile
+    container_name: yarp-gateway
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - auth-api
+      - catalog-api
+      - cart-api
+      - order-api
+      - customer-api
+      - store-api
+      - search-api
+      - warehouse-api
+      - payment-api
+      - notification-api
+    networks:
+      - market-network
+
 volumes:
   postgres_data:
   elastic_data:
