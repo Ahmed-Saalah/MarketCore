@@ -1,0 +1,99 @@
+{
+  "ReverseProxy": {
+    "Routes": {
+      "auth-route": {
+        "ClusterId": "auth-cluster",
+        "Match": { "Path": "/api/auth/{**catch-all}" }
+      },
+      "catalog-products-route": {
+        "ClusterId": "catalog-cluster",
+        "Match": { "Path": "/api/products/{**catch-all}" }
+      },
+
+      "catalog-categories-route": {
+        "ClusterId": "catalog-cluster",
+        "Match": { "Path": "/api/categories/{**catch-all}" }
+      },
+      "cart-route": {
+        "ClusterId": "cart-cluster",
+        "Match": { "Path": "/api/cart/{**catch-all}" }
+      },
+      "order-route": {
+        "ClusterId": "order-cluster",
+        "Match": { "Path": "/api/orders/{**catch-all}" }
+      },
+      "customer-route": {
+        "ClusterId": "customer-cluster",
+        "Match": { "Path": "/api/customers/{**catch-all}" }
+      },
+      "store-route": {
+        "ClusterId": "store-cluster",
+        "Match": { "Path": "/api/stores/{**catch-all}" }
+      },
+      "search-route": {
+        "ClusterId": "search-cluster",
+        "Match": { "Path": "/api/search/{**catch-all}" }
+      },
+      "warehouse-route": {
+        "ClusterId": "warehouse-cluster",
+        "Match": { "Path": "/api/inventory/{**catch-all}" }
+      },
+      "payment-route": {
+        "ClusterId": "payment-cluster",
+        "Match": { "Path": "/api/payments/{**catch-all}" }
+      },
+      "payment-webhook-route": {
+        "ClusterId": "payment-cluster",
+        "Match": { "Path": "/api/webhooks/{**catch-all}" },
+        "Metadata": { "Note": "Public endpoint for Stripe callbacks" }
+      },
+      "notification-route": {
+        "ClusterId": "notification-cluster",
+        "Match": { "Path": "/api/notifications/{**catch-all}" }
+      }
+    },
+    "Clusters": {
+      "auth-cluster": {
+        "Destinations": { "d1": { "Address": "http://auth-api:8080" } },
+        "HttpRequest": { "Timeout": "00:00:10" }
+      },
+      "catalog-cluster": {
+        "Destinations": { "d1": { "Address": "http://catalog-api:8080" } },
+        "HttpRequest": { "Timeout": "00:00:10" }
+      },
+      "cart-cluster": {
+        "Destinations": { "d1": { "Address": "http://cart-api:8080" } },
+        "HttpRequest": { "Timeout": "00:00:05" }
+      },
+      "order-cluster": {
+        "Destinations": { "d1": { "Address": "http://order-api:8080" } },
+        "HttpRequest": { "Timeout": "00:00:15" }
+      },
+      "customer-cluster": {
+        "Destinations": { "d1": { "Address": "http://customer-api:8080" } },
+        "HttpRequest": { "Timeout": "00:00:10" }
+      },
+      "store-cluster": {
+        "Destinations": { "d1": { "Address": "http://store-api:8080" } },
+        "HttpRequest": { "Timeout": "00:00:10" }
+      },
+      "search-cluster": {
+        "Destinations": { "d1": { "Address": "http://search-api:8080" } },
+        "HttpRequest": { "Timeout": "00:00:05" }
+      },
+      "warehouse-cluster": {
+        "Destinations": { "d1": { "Address": "http://warehouse-api:8080" } },
+        "HttpRequest": { "Timeout": "00:00:10" }
+      },
+      "payment-cluster": {
+        "Destinations": { "d1": { "Address": "http://payment-api:8080" } },
+        "HttpRequest": { "Timeout": "00:00:20" },
+        "Metadata": { "Note": "Longer timeout for external Stripe calls" }
+      },
+      "notification-cluster": {
+        "Destinations": { "d1": { "Address": "http://notification-api:8080" } },
+        "HttpRequest": { "Timeout": "00:00:10" }
+      }
+    }
+  }
+}
