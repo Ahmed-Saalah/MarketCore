@@ -14,13 +14,5 @@ public sealed class OrderCompletedEventHandler
         }
     }
 
-    public sealed record Event(
-        Guid OrderId,
-        Guid UserId,
-        Guid StoreId,
-        decimal Total,
-        List<OrderCompletedItemDto> Items
-    );
-
-    public sealed record OrderCompletedItemDto(Guid ProductId, int Quantity);
+    public sealed record Event(Guid OrderId, Guid UserId, Guid StoreId, decimal Total);
 }
