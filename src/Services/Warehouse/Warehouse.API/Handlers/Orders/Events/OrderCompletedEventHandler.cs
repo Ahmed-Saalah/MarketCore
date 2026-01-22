@@ -1,13 +1,16 @@
 ﻿using Core.Messaging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Warehouse.API.Data;
 using Warehouse.API.Entities;
+using Warehouse.API.Messages;
 
 namespace Warehouse.API.Handlers.Orders.Events;
 
 public sealed class OrderCompletedEventHandler
 {
-    public sealed class Handler(WarehouseDbContext dbContext) : IEventHandler<Event>
+    public sealed class Handler(WarehouseDbContext dbContext, IEventPublisher eventPublisher)
+        : IEventHandler<Event>
     {
         public async Task HandleAsync(Event @event, CancellationToken cancellationToken = default)
         {
@@ -20,6 +23,7 @@ public sealed class OrderCompletedEventHandler
 
                 if (inventory != null)
                 {
+                    int previousQuantity = inventory.QuantityOnHand;
                     inventory.ReservedQuantity -= item.Quantity;
                     inventory.QuantityOnHand -= item.Quantity;
 
@@ -33,6 +37,37 @@ public sealed class OrderCompletedEventHandler
                         ReferenceId = @event.OrderId.ToString(),
                         CreatedAt = DateTime.UtcNow,
                     };
+
+                    if (previousQuantity > 0 && inventory.QuantityOnHand <= 0)
+                    {
+                        await eventPublisher.PublishAsync(
+                            new ProductOutOfStockEvent(
+                                item.ProductId,
+                                @event.StoreId,
+                                inventory.Id,
+                                DateTime.UtcNow
+                            ),
+                            "Warehouse.ProductOutOfStockEvent",
+                            cancellationToken
+                        );
+                    }
+                    else if (
+                        previousQuantity > 5
+                        && inventory.QuantityOnHand <= 5
+                        && inventory.QuantityOnHand > 0
+                    )
+                    {
+                        await eventPublisher.PublishAsync(
+                            new ProductLowStockEvent(
+                                item.ProductId,
+                                @event.StoreId,
+                                inventory.Id,
+                                DateTime.UtcNow
+                            ),
+                            "Warehouse.ProductLowStockEvent",
+                            cancellationToken
+                        );
+                    }
 
                     dbContext.StockTransactions.Add(transaction);
                 }
