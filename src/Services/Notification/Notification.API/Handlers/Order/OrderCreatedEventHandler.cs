@@ -6,7 +6,7 @@ using Notification.API.Services.Interfaces;
 
 namespace Notification.API.Handlers.Order;
 
-public sealed class OrderCompletedEventHandler
+public sealed class OrderCreatedEventHandler
 {
     public sealed class Handler(
         IEmailSender emailSender,
@@ -18,23 +18,18 @@ public sealed class OrderCompletedEventHandler
         public async Task HandleAsync(Event @event, CancellationToken cancellationToken = default)
         {
             logger.LogInformation(
-                "Preparing Order Confirmation Email for Order {OrderId}",
+                "Processing Cancellation Email for Order {OrderId}",
                 @event.OrderId
             );
 
             var customer = await customerClient.GetCustomerAsync(@event.UserId, cancellationToken);
-
             var bodyBuilder = new StringBuilder();
             bodyBuilder.AppendLine($"<h1>Hi {customer.DisplayName},</h1>");
-            bodyBuilder.AppendLine($"<h1>Order Confirmed!</h1>");
-            bodyBuilder.AppendLine($"<p>Order ID: <strong>{@event.OrderId}</strong></p>");
+            bodyBuilder.AppendLine(
+                $"<p>Your order <strong>#{@event.OrderId}</strong> has been created.</p>"
+            );
             bodyBuilder.AppendLine("<hr/>");
-            bodyBuilder.AppendLine("<h3>Items:</h3><ul>");
-            bodyBuilder.AppendLine("</ul>");
-            bodyBuilder.AppendLine($"<h3>Total Paid: {@event.Total:C}</h3>");
-            bodyBuilder.AppendLine("<p>Thank you for shopping with us!</p>");
-
-            string subject = $"Order Confirmation #{@event.OrderId.ToString().Substring(0, 8)}";
+            string subject = $"Order Created: #{@event.OrderId.ToString().Substring(0, 8)}";
             string body = bodyBuilder.ToString();
 
             bool isSuccess = await emailSender.SendEmailAsync(customer.Email, subject, body);
@@ -43,10 +38,9 @@ public sealed class OrderCompletedEventHandler
             {
                 Id = Guid.NewGuid(),
                 UserId = @event.UserId,
-                EventType = "OrderCompleted",
+                EventType = "OrderCreated",
                 RecipientEmail = customer.Email,
                 Subject = subject,
-                BodyPreview = $"Total: {@event.Total:C}",
                 IsSuccess = isSuccess,
                 ErrorMessage = isSuccess ? null : "SMTP Delivery Failed",
                 SentAt = DateTime.UtcNow,
@@ -54,13 +48,15 @@ public sealed class OrderCompletedEventHandler
 
             dbContext.Notifications.Add(log);
             await dbContext.SaveChangesAsync(cancellationToken);
-
             if (!isSuccess)
             {
-                logger.LogError("Failed to send email for Order {OrderId}", @event.OrderId);
+                logger.LogError(
+                    "Failed to send cancellation email for Order {OrderId}",
+                    @event.OrderId
+                );
             }
         }
     }
 
-    public sealed record Event(Guid OrderId, Guid UserId, Guid StoreId, decimal Total);
+    public record Event(Guid OrderId, Guid StoreId, Guid UserId, DateTime CreatedAt);
 }
