@@ -4,6 +4,7 @@ using Core.Domain.Response;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.QueryDsl;
 using MediatR;
+using Search.API.Constants;
 using Search.API.Models;
 
 namespace Search.API.Features;
@@ -16,7 +17,8 @@ public sealed class SearchProducts
         int PageSize = 10,
         decimal? MinPrice = null,
         decimal? MaxPrice = null,
-        string? Sort = null
+        string? Sort = null,
+        bool? InStockOnly = false
     ) : IRequest<Response>;
 
     public sealed class Response : Result<ResponseDto>
@@ -48,6 +50,24 @@ public sealed class SearchProducts
                                 mustClauses.Add(m =>
                                     m.Term(t => t.Field(f => f.IsActive).Value(true))
                                 );
+
+                                if (request.InStockOnly == true)
+                                {
+                                    var validStatuses = new[]
+                                    {
+                                        StockStatus.Available,
+                                        StockStatus.Limited,
+                                    }
+                                        .Select(s => (FieldValue)s)
+                                        .ToArray();
+
+                                    mustClauses.Add(m =>
+                                        m.Terms(t =>
+                                            t.Field(f => f.StockStatus)
+                                                .Terms(new TermsQueryField(validStatuses))
+                                        )
+                                    );
+                                }
 
                                 if (request.MinPrice.HasValue)
                                 {
@@ -94,6 +114,8 @@ public sealed class SearchProducts
                                 sort.Field(f => f.Price, c => c.Order(SortOrder.Asc));
                             else if (request.Sort?.ToLower() == "price_desc")
                                 sort.Field(f => f.Price, c => c.Order(SortOrder.Desc));
+                            else
+                                sort.Score(c => c.Order(SortOrder.Desc));
                         }),
                 cancellationToken
             );
