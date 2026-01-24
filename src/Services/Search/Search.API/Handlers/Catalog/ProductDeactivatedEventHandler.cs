@@ -14,10 +14,9 @@ public sealed class ProductDeactivatedEventHandler
         public async Task HandleAsync(Event @event, CancellationToken cancellationToken)
         {
             await client.UpdateAsync<Product, object>(
-                new UpdateRequest<Product, object>(index: "products", id: new Id(@event.ProductId))
-                {
-                    Doc = new { IsActive = false },
-                },
+                "products",
+                @event.ProductId,
+                u => u.Doc(new { IsActive = false }),
                 cancellationToken
             );
         }

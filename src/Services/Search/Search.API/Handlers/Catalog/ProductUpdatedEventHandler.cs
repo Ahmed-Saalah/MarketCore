@@ -21,15 +21,17 @@ public sealed class ProductUpdatedEventHandler
         public async Task HandleAsync(Event @event, CancellationToken cancellationToken)
         {
             await client.UpdateAsync<Product, object>(
-                new UpdateRequest<Product, object>(index: "products", id: new Id(@event.Id))
-                {
-                    Doc = new
-                    {
-                        Name = @event.Name,
-                        Description = @event.Description,
-                        Price = @event.Price,
-                    },
-                },
+                "products",
+                @event.Id,
+                u =>
+                    u.Doc(
+                        new
+                        {
+                            Name = @event.Name,
+                            Description = @event.Description,
+                            Price = @event.Price,
+                        }
+                    ),
                 cancellationToken
             );
         }

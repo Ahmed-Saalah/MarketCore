@@ -12,10 +12,9 @@ public sealed class ProductBackInStockEventHandler
         public async Task HandleAsync(Event @event, CancellationToken cancellationToken = default)
         {
             await client.UpdateAsync<Product, object>(
-                new UpdateRequest<Product, object>(index: "products", id: new Id(@event.ProductId))
-                {
-                    Doc = new { StockStatus = StockStatus.Available },
-                },
+                "products",
+                @event.ProductId,
+                u => u.Doc(new { StockStatus = StockStatus.Available }),
                 cancellationToken
             );
         }
