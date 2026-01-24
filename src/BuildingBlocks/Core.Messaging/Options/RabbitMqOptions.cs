@@ -1,4 +1,4 @@
-﻿namespace Core.Messaging.Options;
+﻿namespace Core.Messaging;
 
 public sealed class RabbitMqOptions
 {
