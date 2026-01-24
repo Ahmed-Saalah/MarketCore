@@ -6,6 +6,7 @@ using Catalog.API.Messages.Products;
 using Core.Domain.Errors;
 using Core.Messaging;
 using FluentAssertions;
+using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -76,6 +77,7 @@ public class CreateProductTests
     public class HandlerTests
     {
         private readonly CatalogDbContext _dbContext;
+        private readonly Mock<IValidator<CreateProduct.Request>> _validatorMock;
         private readonly Mock<IEventPublisher> _eventPublisherMock;
         private readonly CreateProduct.Handler _handler;
 
@@ -85,8 +87,22 @@ public class CreateProductTests
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
             _dbContext = new CatalogDbContext(options);
+            _validatorMock = new Mock<IValidator<CreateProduct.Request>>();
+
+            _validatorMock
+                .Setup(v =>
+                    v.ValidateAsync(
+                        It.IsAny<CreateProduct.Request>(),
+                        It.IsAny<CancellationToken>()
+                    )
+                )
+                .ReturnsAsync(new FluentValidation.Results.ValidationResult());
             _eventPublisherMock = new Mock<IEventPublisher>();
-            _handler = new CreateProduct.Handler(_dbContext, _eventPublisherMock.Object);
+            _handler = new CreateProduct.Handler(
+                _dbContext,
+                _validatorMock.Object,
+                _eventPublisherMock.Object
+            );
         }
 
         [Fact]
@@ -143,7 +159,7 @@ public class CreateProductTests
                             && e.CategoryName == "Electronics"
                             && e.Sku == "LAP-001"
                         ),
-                        "Catalog.Product.ProductCreatedEvent",
+                        "Catalog.ProductCreatedEvent",
                         It.IsAny<CancellationToken>()
                     ),
                 Times.Once

@@ -5,6 +5,7 @@ using Catalog.API.Messages.Products;
 using Core.Domain.Errors;
 using Core.Messaging;
 using FluentAssertions;
+using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -61,6 +62,7 @@ public class UpdateProductTests
     public class HandlerTests
     {
         private readonly CatalogDbContext _dbContext;
+        private readonly Mock<IValidator<UpdateProduct.Request>> _validatorMock;
         private readonly Mock<IEventPublisher> _eventPublisherMock;
         private readonly UpdateProduct.Handler _handler;
 
@@ -71,9 +73,23 @@ public class UpdateProductTests
                 .Options;
 
             _dbContext = new CatalogDbContext(options);
+            _validatorMock = new Mock<IValidator<UpdateProduct.Request>>();
+
+            _validatorMock
+                .Setup(v =>
+                    v.ValidateAsync(
+                        It.IsAny<UpdateProduct.Request>(),
+                        It.IsAny<CancellationToken>()
+                    )
+                )
+                .ReturnsAsync(new FluentValidation.Results.ValidationResult());
             _eventPublisherMock = new Mock<IEventPublisher>();
 
-            _handler = new UpdateProduct.Handler(_dbContext, _eventPublisherMock.Object);
+            _handler = new UpdateProduct.Handler(
+                _dbContext,
+                _validatorMock.Object,
+                _eventPublisherMock.Object
+            );
         }
 
         [Fact]
@@ -133,7 +149,7 @@ public class UpdateProductTests
                         It.Is<ProductUpdatedEvent>(e =>
                             e.Id == productId && e.Name == "New Name" && e.Price == 99.99m
                         ),
-                        "Catalog.Product.ProductUpdatedEvent",
+                        "Catalog.ProductUpdatedEvent",
                         It.IsAny<CancellationToken>()
                     ),
                 Times.Once
