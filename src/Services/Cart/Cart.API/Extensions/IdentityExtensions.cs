@@ -1,40 +1,13 @@
 ﻿using System.Security.Claims;
 using System.Text;
 using Cart.API.Configuration;
-using Cart.API.Data;
-using Cart.API.Handler.Order;
-using Core.Messaging;
-using Core.Messaging.Options;
-using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Cart.API.Extensions;
 
-public static class ServiceExtensions
+public static class IdentityExtensions
 {
-    public static IServiceCollection AddPersistence(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
-    {
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
-        services.AddDbContext<CartDbContext>(options => options.UseNpgsql(connectionString));
-
-        return services;
-    }
-
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
-    {
-        var assembly = typeof(Program).Assembly;
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
-        services.AddValidatorsFromAssembly(assembly);
-        services.AddHttpContextAccessor();
-
-        return services;
-    }
-
     public static IServiceCollection AddJwtAuthentication(
         this IServiceCollection services,
         IConfiguration configuration
@@ -68,26 +41,6 @@ public static class ServiceExtensions
             options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
             options.AddPolicy("Customer", policy => policy.RequireRole("Customer"));
         });
-        return services;
-    }
-
-    public static IServiceCollection AddMessaging(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
-    {
-        services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
-
-        services.AddMessageBroker();
-
-        services.AddRabbitMqEventConsumer(
-            (
-                typeof(OrderCompletedEventHandler.Event),
-                typeof(OrderCompletedEventHandler.Handler),
-                "Order.OrderCompletedEvent"
-            )
-        );
-
         return services;
     }
 }
