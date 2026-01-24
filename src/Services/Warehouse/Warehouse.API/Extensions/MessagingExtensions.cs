@@ -20,12 +20,12 @@ public static class MessagingExtensions
             (
                 typeof(ProductCreatedEventHandler.Event),
                 typeof(ProductCreatedEventHandler.Handler),
-                "Catalog.Product.ProductCreatedEvent"
+                "Catalog.ProductCreatedEvent"
             ),
             (
                 typeof(ProductUpdatedEventHandler.Event),
                 typeof(ProductUpdatedEventHandler.Handler),
-                "Catalog.Product.ProductUpdatedEvent"
+                "Catalog.ProductUpdatedEvent"
             ),
             (
                 typeof(ReserveStockCommandHandler.Command),

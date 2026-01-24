@@ -22,8 +22,6 @@ public sealed class ProductCreatedEventHandler
 
     public sealed class Handler(WarehouseDbContext dbContext) : IEventHandler<Event>
     {
-        public async Task Handle(Event @event, CancellationToken cancellationToken) { }
-
         public async Task HandleAsync(Event @event, CancellationToken cancellationToken = default)
         {
             var exists = await dbContext.Inventory.AnyAsync(
