@@ -53,7 +53,7 @@ public sealed class GetProductById
     {
         public void Map(IEndpointRouteBuilder app)
         {
-            app.MapPut(
+            app.MapGet(
                     "api/products/{id:guid}",
                     async (Guid id, IMediator mediator) =>
                     {
