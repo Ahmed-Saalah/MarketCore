@@ -42,11 +42,20 @@ public sealed class UpdateProduct
         }
     }
 
-    public sealed class Handler(CatalogDbContext dbContext, IEventPublisher eventPublisher)
-        : IRequestHandler<Request, Result<bool>>
+    public sealed class Handler(
+        CatalogDbContext dbContext,
+        IValidator<Request> validator,
+        IEventPublisher eventPublisher
+    ) : IRequestHandler<Request, Result<bool>>
     {
         public async Task<Result<bool>> Handle(Request request, CancellationToken cancellationToken)
         {
+            var validationResilt = await validator.ValidateAsync(request, cancellationToken);
+            if (!validationResilt.IsValid)
+            {
+                return new ValidationError(validationResilt.Errors);
+            }
+
             var product = await dbContext
                 .Products.Include(p => p.Images)
                 .Include(p => p.Attributes)

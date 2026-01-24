@@ -61,291 +61,291 @@ services:
     networks:
       - market-network
   
-  stripe-cli:
-    image: stripe/stripe-cli
-    container_name: market-stripe-cli
-    command: listen --forward-to http://payment-api:8080/api/webhooks --api-key ${STRIPE_SECRET_KEY}
-    environment:
-      - STRIPE_API_KEY=${STRIPE_SECRET_KEY}
-    depends_on:
-      - payment-api
-    networks:
-      - market-network
+  # stripe-cli:
+  #   image: stripe/stripe-cli
+  #   container_name: market-stripe-cli
+  #   command: listen --forward-to http://payment-api:8080/api/webhooks --api-key ${STRIPE_SECRET_KEY}
+  #   environment:
+  #     - STRIPE_API_KEY=${STRIPE_SECRET_KEY}
+  #   depends_on:
+  #     - payment-api
+  #   networks:
+  #     - market-network
 
-  auth-api:
-    image: ${DOCKER_REGISTRY-}authapi
-    build:
-      context: .
-      dockerfile: src/Services/Auth/Auth.API/Dockerfile
-    container_name: auth-api
-    ports:
-      - "5001:8080"
-    environment:
-      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=AuthDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
-      - RabbitMq__Host=rabbitmq
-      - RabbitMq__User=${RABBIT_USER}
-      - RabbitMq__Password=${RABBIT_PASSWORD}
-      - RabbitMq__Exchange=market_event_bus
-      - RabbitMq__Queue=auth-queue
-      - JwtOptions__Secret=${JWT_SECRET}
-      - JwtOptions__Issuer=${JWT_ISSUER}
-      - JwtOptions__Audience=${JWT_AUDIENCE}
-    depends_on:
-      - postgres
-      - rabbitmq
-    networks:
-      - market-network
+  # auth-api:
+  #   image: ${DOCKER_REGISTRY-}authapi
+  #   build:
+  #     context: .
+  #     dockerfile: src/Services/Auth/Auth.API/Dockerfile
+  #   container_name: auth-api
+  #   ports:
+  #     - "5001:8080"
+  #   environment:
+  #     - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=AuthDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+  #     - RabbitMq__Host=rabbitmq
+  #     - RabbitMq__User=${RABBIT_USER}
+  #     - RabbitMq__Password=${RABBIT_PASSWORD}
+  #     - RabbitMq__Exchange=market_event_bus
+  #     - RabbitMq__Queue=auth-queue
+  #     - JwtSettings__Secret=${JWT_SECRET}
+  #     - JwtSettings__Issuer=${JWT_ISSUER}
+  #     - JwtSettings__Audience=${JWT_AUDIENCE}
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #   networks:
+  #     - market-network
 
-  store-api:
-    image: ${DOCKER_REGISTRY-}storeapi
-    build:
-      context: .
-      dockerfile: src/Services/Store/Store.API/Dockerfile
-    container_name: store-api
-    ports:
-      - "5002:8080"
-    environment:
-      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=StoreDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
-      - RabbitMq__Host=rabbitmq
-      - RabbitMq__User=${RABBIT_USER}
-      - RabbitMq__Password=${RABBIT_PASSWORD}
-      - RabbitMq__Exchange=market_event_bus
-      - RabbitMq__Queue=store-queue
-      - JwtOptions__Secret=${JWT_SECRET}
-      - JwtOptions__Issuer=${JWT_ISSUER}
-      - JwtOptions__Audience=${JWT_AUDIENCE}
-    depends_on:
-      - postgres
-      - rabbitmq
-    networks:
-      - market-network
+  # store-api:
+  #   image: ${DOCKER_REGISTRY-}storeapi
+  #   build:
+  #     context: .
+  #     dockerfile: src/Services/Store/Store.API/Dockerfile
+  #   container_name: store-api
+  #   ports:
+  #     - "5002:8080"
+  #   environment:
+  #     - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=StoreDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+  #     - RabbitMq__Host=rabbitmq
+  #     - RabbitMq__User=${RABBIT_USER}
+  #     - RabbitMq__Password=${RABBIT_PASSWORD}
+  #     - RabbitMq__Exchange=market_event_bus
+  #     - RabbitMq__Queue=store-queue
+  #     - JwtSettings__Secret=${JWT_SECRET}
+  #     - JwtSettings__Issuer=${JWT_ISSUER}
+  #     - JwtSettings__Audience=${JWT_AUDIENCE}
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #   networks:
+  #     - market-network
 
-  customer-api:
-    image: ${DOCKER_REGISTRY-}customerapi
-    build:
-      context: .
-      dockerfile: src/Services/Customer/Customer.API/Dockerfile
-    container_name: customer-api
-    ports:
-      - "5003:8080"
-    environment:
-      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=CustomerDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
-      - RabbitMq__Host=rabbitmq
-      - RabbitMq__User=${RABBIT_USER}
-      - RabbitMq__Password=${RABBIT_PASSWORD}
-      - RabbitMq__Exchange=market_event_bus
-      - RabbitMq__Queue=customer-queue
-      - JwtOptions__Secret=${JWT_SECRET}
-      - JwtOptions__Issuer=${JWT_ISSUER}
-      - JwtOptions__Audience=${JWT_AUDIENCE}
-    depends_on:
-      - postgres
-      - rabbitmq
-    networks:
-      - market-network
+  # customer-api:
+  #   image: ${DOCKER_REGISTRY-}customerapi
+  #   build:
+  #     context: .
+  #     dockerfile: src/Services/Customer/Customer.API/Dockerfile
+  #   container_name: customer-api
+  #   ports:
+  #     - "5003:8080"
+  #   environment:
+  #     - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=CustomerDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+  #     - RabbitMq__Host=rabbitmq
+  #     - RabbitMq__User=${RABBIT_USER}
+  #     - RabbitMq__Password=${RABBIT_PASSWORD}
+  #     - RabbitMq__Exchange=market_event_bus
+  #     - RabbitMq__Queue=customer-queue
+  #     - JwtSettings__Secret=${JWT_SECRET}
+  #     - JwtSettings__Issuer=${JWT_ISSUER}
+  #     - JwtSettings__Audience=${JWT_AUDIENCE}
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #   networks:
+  #     - market-network
 
-  catalog-api:
-    image: ${DOCKER_REGISTRY-}catalogapi
-    build:
-      context: .
-      dockerfile: src/Services/Catalog/Catalog.API/Dockerfile
-    container_name: catalog-api
-    ports:
-      - "5004:8080"
-    environment:
-      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=CatalogDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
-      - RabbitMq__Host=rabbitmq
-      - RabbitMq__User=${RABBIT_USER}
-      - RabbitMq__Password=${RABBIT_PASSWORD}
-      - RabbitMq__Exchange=market_event_bus
-      - RabbitMq__Queue=catalog-queue
-      - JwtOptions__Secret=${JWT_SECRET}
-      - JwtOptions__Issuer=${JWT_ISSUER}
-      - JwtOptions__Audience=${JWT_AUDIENCE}
-    depends_on:
-      - postgres
-      - rabbitmq
-    networks:
-      - market-network
+  # catalog-api:
+  #   image: ${DOCKER_REGISTRY-}catalogapi
+  #   build:
+  #     context: .
+  #     dockerfile: src/Services/Catalog/Catalog.API/Dockerfile
+  #   container_name: catalog-api
+  #   ports:
+  #     - "5004:8080"
+  #   environment:
+  #     - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=CatalogDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+  #     - RabbitMq__Host=rabbitmq
+  #     - RabbitMq__User=${RABBIT_USER}
+  #     - RabbitMq__Password=${RABBIT_PASSWORD}
+  #     - RabbitMq__Exchange=market_event_bus
+  #     - RabbitMq__Queue=catalog-queue
+  #     - JwtSettings__Secret=${JWT_SECRET}
+  #     - JwtSettings__Issuer=${JWT_ISSUER}
+  #     - JwtSettings__Audience=${JWT_AUDIENCE}
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #   networks:
+  #     - market-network
 
-  cart-api:
-    image: ${DOCKER_REGISTRY-}cartapi
-    build:
-      context: .
-      dockerfile: src/Services/Cart/Cart.API/Dockerfile
-    container_name: cart-api
-    ports:
-      - "5005:8080"
-    environment:
-      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=CartDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
-      - ConnectionStrings__Redis=redis:6379
-      - RabbitMq__Host=rabbitmq
-      - RabbitMq__User=${RABBIT_USER}
-      - RabbitMq__Password=${RABBIT_PASSWORD}
-      - RabbitMq__Exchange=market_event_bus
-      - RabbitMq__Queue=cart-queue
-      - JwtOptions__Secret=${JWT_SECRET}
-      - JwtOptions__Issuer=${JWT_ISSUER}
-      - JwtOptions__Audience=${JWT_AUDIENCE}
-    depends_on:
-      - postgres
-      - rabbitmq
-      - redis
-    networks:
-      - market-network
+  # cart-api:
+  #   image: ${DOCKER_REGISTRY-}cartapi
+  #   build:
+  #     context: .
+  #     dockerfile: src/Services/Cart/Cart.API/Dockerfile
+  #   container_name: cart-api
+  #   ports:
+  #     - "5005:8080"
+  #   environment:
+  #     - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=CartDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+  #     - ConnectionStrings__Redis=redis:6379
+  #     - RabbitMq__Host=rabbitmq
+  #     - RabbitMq__User=${RABBIT_USER}
+  #     - RabbitMq__Password=${RABBIT_PASSWORD}
+  #     - RabbitMq__Exchange=market_event_bus
+  #     - RabbitMq__Queue=cart-queue
+  #     - JwtSettings__Secret=${JWT_SECRET}
+  #     - JwtSettings__Issuer=${JWT_ISSUER}
+  #     - JwtSettings__Audience=${JWT_AUDIENCE}
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #     - redis
+  #   networks:
+  #     - market-network
 
-  order-api:
-    image: ${DOCKER_REGISTRY-}orderapi
-    build:
-      context: .
-      dockerfile: src/Services/Order/Order.API/Dockerfile
-    container_name: order-api
-    ports:
-      - "5006:8080"
-    environment:
-      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=OrderDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
-      - RabbitMq__Host=rabbitmq
-      - RabbitMq__User=${RABBIT_USER}
-      - RabbitMq__Password=${RABBIT_PASSWORD}
-      - RabbitMq__Exchange=market_event_bus
-      - RabbitMq__Queue=order-queue
-      - JwtOptions__Secret=${JWT_SECRET}
-      - JwtOptions__Issuer=${JWT_ISSUER}
-      - JwtOptions__Audience=${JWT_AUDIENCE}
-    depends_on:
-      - postgres
-      - rabbitmq
-    networks:
-      - market-network
+  # order-api:
+  #   image: ${DOCKER_REGISTRY-}orderapi
+  #   build:
+  #     context: .
+  #     dockerfile: src/Services/Order/Order.API/Dockerfile
+  #   container_name: order-api
+  #   ports:
+  #     - "5006:8080"
+  #   environment:
+  #     - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=OrderDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+  #     - RabbitMq__Host=rabbitmq
+  #     - RabbitMq__User=${RABBIT_USER}
+  #     - RabbitMq__Password=${RABBIT_PASSWORD}
+  #     - RabbitMq__Exchange=market_event_bus
+  #     - RabbitMq__Queue=order-queue
+  #     - JwtSettings__Secret=${JWT_SECRET}
+  #     - JwtSettings__Issuer=${JWT_ISSUER}
+  #     - JwtSettings__Audience=${JWT_AUDIENCE}
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #   networks:
+  #     - market-network
 
-  warehouse-api:
-    image: ${DOCKER_REGISTRY-}warehouseapi
-    build:
-      context: .
-      dockerfile: src/Services/Warehouse/Warehouse.API/Dockerfile
-    container_name: warehouse-api
-    ports:
-      - "5007:8080"
-    environment:
-      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=WarehouseDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
-      - RabbitMq__Host=rabbitmq
-      - RabbitMq__User=${RABBIT_USER}
-      - RabbitMq__Password=${RABBIT_PASSWORD}
-      - RabbitMq__Exchange=market_event_bus
-      - RabbitMq__Queue=warehouse-queue
-      - JwtOptions__Secret=${JWT_SECRET}
-      - JwtOptions__Issuer=${JWT_ISSUER}
-      - JwtOptions__Audience=${JWT_AUDIENCE}
-    depends_on:
-      - postgres
-      - rabbitmq
-    networks:
-      - market-network
+  # warehouse-api:
+  #   image: ${DOCKER_REGISTRY-}warehouseapi
+  #   build:
+  #     context: .
+  #     dockerfile: src/Services/Warehouse/Warehouse.API/Dockerfile
+  #   container_name: warehouse-api
+  #   ports:
+  #     - "5007:8080"
+  #   environment:
+  #     - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=WarehouseDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+  #     - RabbitMq__Host=rabbitmq
+  #     - RabbitMq__User=${RABBIT_USER}
+  #     - RabbitMq__Password=${RABBIT_PASSWORD}
+  #     - RabbitMq__Exchange=market_event_bus
+  #     - RabbitMq__Queue=warehouse-queue
+  #     - JwtSettings__Secret=${JWT_SECRET}
+  #     - JwtSettings__Issuer=${JWT_ISSUER}
+  #     - JwtSettings__Audience=${JWT_AUDIENCE}
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #   networks:
+  #     - market-network
 
-  search-api:
-    image: ${DOCKER_REGISTRY-}searchapi
-    build:
-      context: .
-      dockerfile: src/Services/Search/Search.API/Dockerfile
-    container_name: search-api
-    ports:
-      - "5008:8080"
-    environment:
-      - ElasticSettings__Uri=http://elasticsearch:9200
-      - RabbitMq__Host=rabbitmq
-      - RabbitMq__User=${RABBIT_USER}
-      - RabbitMq__Password=${RABBIT_PASSWORD}
-      - RabbitMq__Exchange=market_event_bus
-      - RabbitMq__Queue=search-queue
-      - JwtOptions__Secret=${JWT_SECRET}
-      - JwtOptions__Issuer=${JWT_ISSUER}
-      - JwtOptions__Audience=${JWT_AUDIENCE}
-    depends_on:
-      - elasticsearch
-      - rabbitmq
-    networks:
-      - market-network
+  # search-api:
+  #   image: ${DOCKER_REGISTRY-}searchapi
+  #   build:
+  #     context: .
+  #     dockerfile: src/Services/Search/Search.API/Dockerfile
+  #   container_name: search-api
+  #   ports:
+  #     - "5008:8080"
+  #   environment:
+  #     - ElasticSettings__Uri=http://elasticsearch:9200
+  #     - RabbitMq__Host=rabbitmq
+  #     - RabbitMq__User=${RABBIT_USER}
+  #     - RabbitMq__Password=${RABBIT_PASSWORD}
+  #     - RabbitMq__Exchange=market_event_bus
+  #     - RabbitMq__Queue=search-queue
+  #     - JwtSettings__Secret=${JWT_SECRET}
+  #     - JwtSettings__Issuer=${JWT_ISSUER}
+  #     - JwtSettings__Audience=${JWT_AUDIENCE}
+  #   depends_on:
+  #     - elasticsearch
+  #     - rabbitmq
+  #   networks:
+  #     - market-network
 
-  payment-api:
-    image: ${DOCKER_REGISTRY-}paymentapi
-    build:
-      context: .
-      dockerfile: src/Services/Payment/Payment.API/Dockerfile
-    container_name: payment-api
-    ports:
-      - "5009:8080"
-    environment:
-      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=PaymentDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
-      - RabbitMq__Host=rabbitmq
-      - RabbitMq__User=${RABBIT_USER}
-      - RabbitMq__Password=${RABBIT_PASSWORD}
-      - RabbitMq__Exchange=market_event_bus
-      - RabbitMq__Queue=payment-queue
-      - JwtOptions__Secret=${JWT_SECRET}
-      - JwtOptions__Issuer=${JWT_ISSUER}
-      - JwtOptions__Audience=${JWT_AUDIENCE}
-      - Stripe__SecretKey=${STRIPE_SECRET_KEY}
-      - Stripe__PublishableKey=${STRIPE_PUBLISHABLE_KEY}
-      - Stripe__WebhookSecret=${STRIPE_WEBHOOK_SECRET}
-    depends_on:
-      - postgres
-      - rabbitmq
-    networks:
-      - market-network
+  # payment-api:
+  #   image: ${DOCKER_REGISTRY-}paymentapi
+  #   build:
+  #     context: .
+  #     dockerfile: src/Services/Payment/Payment.API/Dockerfile
+  #   container_name: payment-api
+  #   ports:
+  #     - "5009:8080"
+  #   environment:
+  #     - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=PaymentDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+  #     - RabbitMq__Host=rabbitmq
+  #     - RabbitMq__User=${RABBIT_USER}
+  #     - RabbitMq__Password=${RABBIT_PASSWORD}
+  #     - RabbitMq__Exchange=market_event_bus
+  #     - RabbitMq__Queue=payment-queue
+  #     - JwtSettings__Secret=${JWT_SECRET}
+  #     - JwtSettings__Issuer=${JWT_ISSUER}
+  #     - JwtSettings__Audience=${JWT_AUDIENCE}
+  #     - Stripe__SecretKey=${STRIPE_SECRET_KEY}
+  #     - Stripe__PublishableKey=${STRIPE_PUBLISHABLE_KEY}
+  #     - Stripe__WebhookSecret=${STRIPE_WEBHOOK_SECRET}
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #   networks:
+  #     - market-network
 
-  notification-api:
-    image: ${DOCKER_REGISTRY-}notificationapi
-    build:
-      context: .
-      dockerfile: src/Services/Notification/Notification.API/Dockerfile
-    container_name: notification-api
-    ports:
-      - "5010:8080"
-    environment:
-      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=NotificationDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
-      - RabbitMq__Host=rabbitmq
-      - RabbitMq__User=${RABBIT_USER}
-      - RabbitMq__Password=${RABBIT_PASSWORD}
-      - RabbitMq__Exchange=market_event_bus
-      - RabbitMq__Queue=notification-queue
-      - JwtOptions__Secret=${JWT_SECRET}
-      - JwtOptions__Issuer=${JWT_ISSUER}
-      - JwtOptions__Audience=${JWT_AUDIENCE}
-      - Smtp__Host=${SMTP_HOST}
-      - Smtp__Port=${SMTP_PORT}
-      - Smtp__Username=${SMTP_USER}
-      - Smtp__Password=${SMTP_PASS}
-      - ApiUrls__CustomerApi=http://customer-api:8080
-    depends_on:
-      - postgres
-      - rabbitmq
-      - customer-api
-    networks:
-      - market-network
+  # notification-api:
+  #   image: ${DOCKER_REGISTRY-}notificationapi
+  #   build:
+  #     context: .
+  #     dockerfile: src/Services/Notification/Notification.API/Dockerfile
+  #   container_name: notification-api
+  #   ports:
+  #     - "5010:8080"
+  #   environment:
+  #     - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=NotificationDb;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+  #     - RabbitMq__Host=rabbitmq
+  #     - RabbitMq__User=${RABBIT_USER}
+  #     - RabbitMq__Password=${RABBIT_PASSWORD}
+  #     - RabbitMq__Exchange=market_event_bus
+  #     - RabbitMq__Queue=notification-queue
+  #     - JwtSettings__Secret=${JWT_SECRET}
+  #     - JwtSettings__Issuer=${JWT_ISSUER}
+  #     - JwtSettings__Audience=${JWT_AUDIENCE}
+  #     - Smtp__Host=${SMTP_HOST}
+  #     - Smtp__Port=${SMTP_PORT}
+  #     - Smtp__Username=${SMTP_USER}
+  #     - Smtp__Password=${SMTP_PASS}
+  #     - ApiUrls__CustomerApi=http://customer-api:8080
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #     - customer-api
+  #   networks:
+  #     - market-network
 
-  yarp-gateway:
-    image: ${DOCKER_REGISTRY-}apigateway
-    build:
-      context: .
-      dockerfile: src/ApiGateways/ApiGateway/Dockerfile
-    container_name: yarp-gateway
-    ports:
-      - "5000:8080"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    depends_on:
-      - auth-api
-      - catalog-api
-      - cart-api
-      - order-api
-      - customer-api
-      - store-api
-      - search-api
-      - warehouse-api
-      - payment-api
-      - notification-api
-    networks:
-      - market-network
+  # yarp-gateway:
+  #   image: ${DOCKER_REGISTRY-}apigateway
+  #   build:
+  #     context: .
+  #     dockerfile: src/ApiGateways/ApiGateway/Dockerfile
+  #   container_name: yarp-gateway
+  #   ports:
+  #     - "5000:8080"
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #   depends_on:
+  #     - auth-api
+  #     - catalog-api
+  #     - cart-api
+  #     - order-api
+  #     - customer-api
+  #     - store-api
+  #     - search-api
+  #     - warehouse-api
+  #     - payment-api
+  #     - notification-api
+  #   networks:
+  #     - market-network
 
 volumes:
   postgres_data:

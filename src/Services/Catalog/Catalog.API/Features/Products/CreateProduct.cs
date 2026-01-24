@@ -44,11 +44,20 @@ public sealed class CreateProduct
         }
     }
 
-    public class Handler(CatalogDbContext dbContext, IEventPublisher eventPublisher)
-        : IRequestHandler<Request, Result<Guid>>
+    public class Handler(
+        CatalogDbContext dbContext,
+        IValidator<Request> validator,
+        IEventPublisher eventPublisher
+    ) : IRequestHandler<Request, Result<Guid>>
     {
         public async Task<Result<Guid>> Handle(Request request, CancellationToken cancellationToken)
         {
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+            if (!validationResult.IsValid)
+            {
+                return new ValidationError(validationResult.Errors);
+            }
+
             var skuExists = await dbContext.Products.AnyAsync(
                 p => p.Sku == request.Data.Sku,
                 cancellationToken
