@@ -43,7 +43,7 @@ public sealed class ClearCart
             await repository.StoreCartAsync(cart, ct);
 
             await eventPublisher.PublishAsync(
-                new CartClearedEvent(cart.Id, cart.UserId, cart.StoreId, cart.UpdatedAt),
+                new CartClearedEvent(cart.Id, cart.UserId, cart.UpdatedAt),
                 "Cart.CartClearedEvent",
                 ct
             );
@@ -58,12 +58,7 @@ public sealed class ClearCart
         {
             app.MapDelete(
                     "/api/carts/{cartId}/clear",
-                    async (
-                        [FromRoute] Guid cartId,
-                        [FromRoute] Guid productId,
-                        IMediator mediator,
-                        ClaimsPrincipal user
-                    ) =>
+                    async ([FromRoute] Guid cartId, IMediator mediator, ClaimsPrincipal user) =>
                     {
                         var response = await mediator.Send(new Request(cartId, user.GetUserId()));
                         return response.ToHttpResult();

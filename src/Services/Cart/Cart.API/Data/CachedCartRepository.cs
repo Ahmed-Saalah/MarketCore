@@ -83,7 +83,17 @@ public class CachedCartRepository : ICartRepository
             return null;
         }
 
-        await StoreCartAsync(cartFromDb, ct);
+        string cartKey = $"cart:{cartFromDb.Id}";
+
+        await _cache.SetStringAsync(
+            cartKey,
+            JsonSerializer.Serialize(cartFromDb, _jsonOptions),
+            _cacheOptions,
+            ct
+        );
+
+        await _cache.SetStringAsync(userPointerKey, cartFromDb.Id.ToString(), _cacheOptions, ct);
+
         return cartFromDb;
     }
 
@@ -92,7 +102,16 @@ public class CachedCartRepository : ICartRepository
         CancellationToken ct = default
     )
     {
-        _dbContext.Carts.Update(cart);
+        var exists = await _dbContext.Carts.AsNoTracking().AnyAsync(c => c.Id == cart.Id, ct);
+
+        if (exists)
+        {
+            _dbContext.Carts.Update(cart);
+        }
+        else
+        {
+            _dbContext.Carts.Add(cart);
+        }
         await _dbContext.SaveChangesAsync(ct);
 
         string cartKey = $"cart:{cart.Id}";

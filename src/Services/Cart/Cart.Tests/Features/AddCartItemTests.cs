@@ -59,7 +59,6 @@ public class AddItemTests
             return new AddItem.Request(
                 CartId: Guid.NewGuid(),
                 UserId: Guid.NewGuid(),
-                StoreId: Guid.NewGuid(),
                 Item: new AddItem.AddItemDto(
                     ProductId: productId ?? Guid.NewGuid(),
                     ProductName: "Test Product",
@@ -270,7 +269,6 @@ public class AddItemTests
             var request = new AddItem.Request(
                 cartId,
                 null,
-                Guid.NewGuid(),
                 new AddItem.AddItemDto(Guid.NewGuid(), "P", 10, 1, null)
             );
 
@@ -303,7 +301,6 @@ public class AddItemTests
             return new AddItem.Request(
                 CartId: Guid.NewGuid(),
                 UserId: Guid.NewGuid(),
-                StoreId: Guid.NewGuid(),
                 Item: new AddItem.AddItemDto(
                     ProductId: Guid.NewGuid(),
                     ProductName: "Unit Test Product",

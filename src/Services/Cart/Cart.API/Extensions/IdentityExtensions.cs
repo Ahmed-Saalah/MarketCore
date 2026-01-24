@@ -35,12 +35,8 @@ public static class IdentityExtensions
                 };
             });
 
-        services.AddAuthorization(options =>
-        {
-            options.AddPolicy("Seller", policy => policy.RequireRole("Seller"));
-            options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
-            options.AddPolicy("Customer", policy => policy.RequireRole("Customer"));
-        });
+        services.AddAuthorization();
+
         return services;
     }
 }

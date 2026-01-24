@@ -18,8 +18,6 @@ public class CartDbContext(DbContextOptions<CartDbContext> options) : DbContext(
 
             entity.HasIndex(e => e.UserId);
 
-            entity.HasIndex(e => e.StoreId);
-
             entity
                 .HasMany(c => c.Items)
                 .WithOne(i => i.Cart)

@@ -21,7 +21,6 @@ public sealed class UpdateCartItem
     public sealed record CartDto(
         Guid Id,
         Guid? UserId,
-        Guid StoreId,
         decimal TotalPrice,
         List<CartItemDto> Items
     );
@@ -98,7 +97,6 @@ public sealed class UpdateCartItem
             return new CartDto(
                 cart.Id,
                 cart.UserId,
-                cart.StoreId,
                 cart.TotalPrice,
                 cart.Items.Select(i => new CartItemDto(
                         i.ProductId,

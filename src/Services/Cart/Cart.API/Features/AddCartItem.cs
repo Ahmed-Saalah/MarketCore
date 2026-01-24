@@ -25,7 +25,6 @@ public sealed class AddItem
     public sealed record CartDto(
         Guid Id,
         Guid? UserId,
-        Guid StoreId,
         decimal TotalPrice,
         List<CartItemDto> Items
     );
@@ -38,8 +37,7 @@ public sealed class AddItem
         string? PictureUrl
     );
 
-    public sealed record Request(Guid? CartId, Guid? UserId, Guid StoreId, AddItemDto Item)
-        : IRequest<Response>;
+    public sealed record Request(Guid? CartId, Guid? UserId, AddItemDto Item) : IRequest<Response>;
 
     public sealed class Response : Result<CartDto>
     {
@@ -89,7 +87,6 @@ public sealed class AddItem
                 {
                     Id = request.CartId ?? Guid.NewGuid(),
                     UserId = request.UserId,
-                    StoreId = request.StoreId,
                     Items = [],
                 };
             }
@@ -139,7 +136,6 @@ public sealed class AddItem
             return new CartDto(
                 cart.Id,
                 cart.UserId,
-                cart.StoreId,
                 cart.TotalPrice,
                 cart.Items.Select(i => new CartItemDto(
                         i.ProductId,
@@ -162,13 +158,12 @@ public sealed class AddItem
                     async (
                         AddItemDto dto,
                         Guid? cartId,
-                        Guid storeId,
                         IMediator mediator,
                         ClaimsPrincipal user
                     ) =>
                     {
                         var result = await mediator.Send(
-                            new Request(cartId, user.GetUserId(), storeId, dto)
+                            new Request(cartId, user.GetUserId(), dto)
                         );
                         return result.ToHttpResult();
                     }
