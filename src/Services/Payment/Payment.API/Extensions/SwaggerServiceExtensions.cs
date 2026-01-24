@@ -1,6 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 
-namespace Customer.API.Extensions;
+namespace Payment.API.Extensions;
 
 public static class SwaggerServiceExtensions
 {
