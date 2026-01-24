@@ -1,20 +1,11 @@
 ﻿using Core.Messaging;
-using Core.Messaging.Options;
 using Search.API.Handlers.Catalog;
 using Search.API.Handlers.Warehouse;
 
 namespace Search.API.Extensions;
 
-public static class ServiceExtensions
+public static class MessaginExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
-    {
-        var assembly = typeof(Program).Assembly;
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
-        services.AddHttpContextAccessor();
-        return services;
-    }
-
     public static IServiceCollection AddMessaging(
         this IServiceCollection services,
         IConfiguration configuration
