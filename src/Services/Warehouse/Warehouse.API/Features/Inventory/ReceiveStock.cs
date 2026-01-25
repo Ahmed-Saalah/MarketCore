@@ -37,11 +37,20 @@ public sealed class ReceiveStock
         }
     }
 
-    internal sealed class Handler(WarehouseDbContext dbContext, IEventPublisher eventPublisher)
-        : IRequestHandler<Request, Response>
+    internal sealed class Handler(
+        WarehouseDbContext dbContext,
+        IValidator<Request> validator,
+        IEventPublisher eventPublisher
+    ) : IRequestHandler<Request, Response>
     {
         public async Task<Response> Handle(Request request, CancellationToken ct)
         {
+            var validationResult = await validator.ValidateAsync(request, ct);
+            if (!validationResult.IsValid)
+            {
+                return new ValidationError(validationResult.Errors);
+            }
+
             var inventory = await dbContext.Inventory.FirstOrDefaultAsync(
                 i => i.ProductId == request.ProductId,
                 ct

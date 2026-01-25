@@ -60,7 +60,6 @@ public sealed class ReserveStockCommandHandler
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                // TODO: Implement retry logic
                 logger.LogWarning(
                     ex,
                     "Concurrency conflict for Order {OrderId}. Retrying...",
