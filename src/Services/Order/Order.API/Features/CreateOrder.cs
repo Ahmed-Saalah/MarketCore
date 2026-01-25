@@ -57,11 +57,20 @@ public sealed class CreateOrder
         }
     }
 
-    public sealed class Handler(OrderDbContext dbContext, IEventPublisher eventPublisher)
-        : IRequestHandler<Request, Response>
+    public sealed class Handler(
+        OrderDbContext dbContext,
+        IValidator<Request> validator,
+        IEventPublisher eventPublisher
+    ) : IRequestHandler<Request, Response>
     {
         public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
         {
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+            if (!validationResult.IsValid)
+            {
+                return new ValidationError(validationResult.Errors);
+            }
+
             var order = new Entities.Order
             {
                 Id = Guid.NewGuid(),
@@ -116,21 +125,26 @@ public sealed class CreateOrder
         public void Map(IEndpointRouteBuilder app)
         {
             app.MapPost(
-                "api/orders",
-                async ([FromBody] CreateOrderDto data, ClaimsPrincipal user, IMediator mediator) =>
-                {
-                    if (user.GetUserId() is not { } userId)
+                    "api/orders",
+                    async (
+                        [FromBody] CreateOrderDto data,
+                        ClaimsPrincipal user,
+                        IMediator mediator
+                    ) =>
                     {
-                        return Results.Unauthorized();
+                        if (user.GetUserId() is not { } userId)
+                        {
+                            return Results.Unauthorized();
+                        }
+
+                        var response = await mediator.Send(
+                            new Request(userId, data.StoreId, data.Items)
+                        );
+
+                        return response.ToHttpResult();
                     }
-
-                    var response = await mediator.Send(
-                        new Request(userId, data.StoreId, data.Items)
-                    );
-
-                    return response.ToHttpResult();
-                }
-            );
+                )
+                .RequireAuthorization("Customer");
         }
     }
 }
