@@ -27,10 +27,17 @@ public sealed class GetOrderByOrderNumber
         }
     }
 
-    public sealed class Handler(OrderDbContext dbContext) : IRequestHandler<Request, Response>
+    public sealed class Handler(OrderDbContext dbContext, IValidator<Request> validator)
+        : IRequestHandler<Request, Response>
     {
         public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
         {
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+            if (!validationResult.IsValid)
+            {
+                return new ValidationError(validationResult.Errors);
+            }
+
             var order = await dbContext
                 .Orders.Include(o => o.Items)
                 .FirstOrDefaultAsync(o => o.OrderNumber == request.OrderNumber, cancellationToken);
