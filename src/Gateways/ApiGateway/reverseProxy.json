@@ -3,7 +3,7 @@
     "Routes": {
       "auth-route": {
         "ClusterId": "auth-cluster",
-        "Match": { "Path": "/api/auth/{**catch-all}" }
+        "Match": { "Path": "/api/users/{**catch-all}" }
       },
       "catalog-products-route": {
         "ClusterId": "catalog-cluster",
