@@ -327,7 +327,7 @@ services:
     image: ${DOCKER_REGISTRY-}apigateway
     build:
       context: .
-      dockerfile: src/ApiGateways/ApiGateway/Dockerfile
+      dockerfile: src/Gateways/ApiGateway/Dockerfile
     container_name: yarp-gateway
     ports:
       - "5000:8080"
