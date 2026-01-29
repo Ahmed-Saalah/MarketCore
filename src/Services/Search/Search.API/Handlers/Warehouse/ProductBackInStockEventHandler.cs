@@ -20,5 +20,6 @@ public sealed class ProductBackInStockEventHandler
         }
     }
 
+    [MessageKey("Warehouse.ProductBackInStockEvent")]
     public sealed record Event(Guid ProductId, Guid StoreId, Guid InventoryId, DateTime Timestamp);
 }

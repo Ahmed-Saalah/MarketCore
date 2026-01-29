@@ -7,8 +7,6 @@ namespace Search.API.Handlers.Catalog;
 
 public sealed class ProductActivatedEventHandler
 {
-    public sealed record Event(Guid ProductId, DateTime Timestamp);
-
     public sealed class Handler(ElasticsearchClient client) : IEventHandler<Event>
     {
         public async Task HandleAsync(Event @event, CancellationToken cancellationToken)
@@ -21,4 +19,7 @@ public sealed class ProductActivatedEventHandler
             );
         }
     }
+
+    [MessageKey("Catalog.ProductActivatedEvent")]
+    public sealed record Event(Guid ProductId, DateTime Timestamp);
 }

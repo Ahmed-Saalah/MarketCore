@@ -20,5 +20,6 @@ public sealed class ProductOutOfStockEventHandler
         }
     }
 
+    [MessageKey("Warehouse.ProductOutOfStockEvent")]
     public sealed record Event(Guid ProductId, Guid StoreId, Guid InventoryId, DateTime Timestamp);
 }

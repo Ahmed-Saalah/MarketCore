@@ -7,19 +7,6 @@ namespace Search.API.Handlers.Catalog;
 
 public sealed class ProductCreatedEventHandler
 {
-    public sealed record Event(
-        Guid ProductId,
-        Guid StoreId,
-        string Sku,
-        string Name,
-        string Description,
-        decimal Price,
-        string? PictureUrl,
-        Guid CategoryId,
-        string? CategoryName,
-        DateTime CreatedAt
-    );
-
     public sealed class Handler(ElasticsearchClient client) : IEventHandler<Event>
     {
         public async Task HandleAsync(Event @event, CancellationToken cancellationToken)
@@ -39,4 +26,18 @@ public sealed class ProductCreatedEventHandler
             await client.IndexAsync(product, idx => idx.Index("products"), cancellationToken);
         }
     }
+
+    [MessageKey("Catalog.ProductCreatedEvent")]
+    public sealed record Event(
+        Guid ProductId,
+        Guid StoreId,
+        string Sku,
+        string Name,
+        string Description,
+        decimal Price,
+        string? PictureUrl,
+        Guid CategoryId,
+        string? CategoryName,
+        DateTime CreatedAt
+    );
 }

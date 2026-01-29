@@ -20,5 +20,6 @@ public sealed class ProductLowStockEventHandler
         }
     }
 
+    [MessageKey("Warehouse.ProductLowStockEvent")]
     public sealed record Event(Guid ProductId, Guid StoreId, Guid InventoryId, DateTime Timestamp);
 }

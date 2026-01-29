@@ -1,14 +1,11 @@
 ﻿using Core.Messaging;
 using Elastic.Clients.Elasticsearch;
-using MediatR;
 using Search.API.Models;
 
 namespace Search.API.Handlers.Catalog;
 
 public sealed class ProductDeactivatedEventHandler
 {
-    public sealed record Event(Guid ProductId, DateTime Timestamp);
-
     public sealed class Handler(ElasticsearchClient client) : IEventHandler<Event>
     {
         public async Task HandleAsync(Event @event, CancellationToken cancellationToken)
@@ -21,4 +18,7 @@ public sealed class ProductDeactivatedEventHandler
             );
         }
     }
+
+    [MessageKey("Catalog.ProductDeactivatedEvent")]
+    public sealed record Event(Guid ProductId, DateTime Timestamp);
 }
