@@ -1,4 +1,5 @@
-﻿using Core.Messaging.Implementations;
+﻿using System.Reflection;
+using Core.Messaging.Implementations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -24,14 +25,38 @@ public static class MessagingExtensions
 
     public static IServiceCollection AddRabbitMqEventConsumer(
         this IServiceCollection services,
-        params (Type EventType, Type HandlerType, string RoutingKey)[] events
+        Assembly assembly
     )
     {
-        foreach (var evt in events)
+        var routingKeyMap = new Dictionary<string, Type>();
+
+        var handlerTypes = assembly
+            .GetTypes()
+            .Where(t => t.IsClass && !t.IsAbstract)
+            .Select(t => new
+            {
+                HandlerType = t,
+                InterfaceType = t.GetInterfaces()
+                    .FirstOrDefault(i =>
+                        i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEventHandler<>)
+                    ),
+            })
+            .Where(x => x.InterfaceType != null)
+            .ToList();
+
+        foreach (var item in handlerTypes)
         {
-            var handlerInterface = typeof(IEventHandler<>).MakeGenericType(evt.EventType);
-            services.AddScoped(handlerInterface, evt.HandlerType);
-            services.AddScoped(evt.HandlerType);
+            var eventType = item.InterfaceType!.GetGenericArguments()[0];
+            var attribute = eventType.GetCustomAttribute<MessageKeyAttribute>();
+            if (attribute is null)
+            {
+                throw new InvalidOperationException(
+                    $"Event '{eventType.Name}' cannot be registered because it is missing the [MessageKey] attribute."
+                );
+            }
+
+            routingKeyMap[attribute.Key] = eventType;
+            services.AddScoped(item.InterfaceType, item.HandlerType);
         }
 
         services.AddHostedService(sp =>
@@ -46,7 +71,7 @@ public static class MessagingExtensions
                 options.Password,
                 options.Exchange,
                 options.Queue,
-                events.ToDictionary(e => e.RoutingKey, e => e.EventType)
+                routingKeyMap
             );
         });
 
