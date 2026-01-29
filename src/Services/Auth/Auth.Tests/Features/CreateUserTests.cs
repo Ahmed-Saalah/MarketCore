@@ -118,7 +118,6 @@ public class CreateUserTests
                     It.Is<UserCreatedEvent>(e =>
                         e.Email == request.Email && e.Role == request.Role
                     ),
-                    It.IsAny<string>(),
                     It.IsAny<CancellationToken>()
                 ),
             Times.Once
