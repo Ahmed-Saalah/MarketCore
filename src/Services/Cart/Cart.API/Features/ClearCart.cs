@@ -44,7 +44,6 @@ public sealed class ClearCart
 
             await eventPublisher.PublishAsync(
                 new CartClearedEvent(cart.Id, cart.UserId, cart.UpdatedAt),
-                "Cart.CartClearedEvent",
                 ct
             );
 

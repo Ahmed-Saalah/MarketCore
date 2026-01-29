@@ -90,7 +90,6 @@ public sealed class UpdateCartItem
                     item.Quantity,
                     item.PictureUrl
                 ),
-                "Cart.CartItemUpdatedEvent",
                 ct
             );
 

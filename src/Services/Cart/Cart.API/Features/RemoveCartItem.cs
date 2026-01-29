@@ -57,7 +57,6 @@ public sealed class RemoveItem
                     item.Quantity,
                     item.PictureUrl
                 ),
-                "Cart.CartItemRemovedEvent",
                 ct
             );
 

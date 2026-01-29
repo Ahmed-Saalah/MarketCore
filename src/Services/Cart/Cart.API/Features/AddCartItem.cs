@@ -129,7 +129,6 @@ public sealed class AddItem
                     cartItem.Quantity,
                     cartItem.PictureUrl
                 ),
-                "Cart.AddCartItemAddedEvent",
                 ct
             );
 
