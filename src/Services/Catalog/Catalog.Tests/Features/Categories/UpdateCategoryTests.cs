@@ -102,7 +102,6 @@ public class UpdateCategoryTests
                         It.Is<CategoryUpdatedEvent>(e =>
                             e.Name == "New Name" && e.Description == "New Desc"
                         ),
-                        "catalog.category.updated",
                         It.IsAny<CancellationToken>()
                     ),
                 Times.Once

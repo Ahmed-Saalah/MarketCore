@@ -63,7 +63,6 @@ public class ActivateProductTests
                 x =>
                     x.PublishAsync(
                         It.Is<ProductActivatedEvent>(e => e.ProductId == productId),
-                        "Catalog.Product.ProductActivatedEvent",
                         It.IsAny<CancellationToken>()
                     ),
                 Times.Once
@@ -123,7 +122,6 @@ public class ActivateProductTests
                 x =>
                     x.PublishAsync(
                         It.IsAny<ProductActivatedEvent>(),
-                        It.IsAny<string>(),
                         It.IsAny<CancellationToken>()
                     ),
                 Times.Never

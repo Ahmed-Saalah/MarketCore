@@ -149,7 +149,6 @@ public class UpdateProductTests
                         It.Is<ProductUpdatedEvent>(e =>
                             e.Id == productId && e.Name == "New Name" && e.Price == 99.99m
                         ),
-                        "Catalog.ProductUpdatedEvent",
                         It.IsAny<CancellationToken>()
                     ),
                 Times.Once

@@ -78,7 +78,6 @@ public class CreateCategoryTests
                 x =>
                     x.PublishAsync(
                         It.Is<CategoryCreatedEvent>(e => e.Name == request.Name),
-                        "catalog.category.created",
                         It.IsAny<CancellationToken>()
                     ),
                 Times.Once
@@ -117,11 +116,7 @@ public class CreateCategoryTests
 
             _eventPublisherMock.Verify(
                 x =>
-                    x.PublishAsync(
-                        It.IsAny<CategoryCreatedEvent>(),
-                        It.IsAny<string>(),
-                        It.IsAny<CancellationToken>()
-                    ),
+                    x.PublishAsync(It.IsAny<CategoryCreatedEvent>(), It.IsAny<CancellationToken>()),
                 Times.Once
             );
         }

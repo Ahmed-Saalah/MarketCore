@@ -159,7 +159,6 @@ public class CreateProductTests
                             && e.CategoryName == "Electronics"
                             && e.Sku == "LAP-001"
                         ),
-                        "Catalog.ProductCreatedEvent",
                         It.IsAny<CancellationToken>()
                     ),
                 Times.Once
