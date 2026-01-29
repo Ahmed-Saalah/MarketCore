@@ -69,6 +69,7 @@ public sealed class OrderCanceledEventHandler
         }
     }
 
+    [MessageKey("Order.OrderCanceledEvent")]
     public sealed record Event(
         Guid OrderId,
         Guid UserId,

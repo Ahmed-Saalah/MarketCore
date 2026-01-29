@@ -58,5 +58,6 @@ public sealed class OrderCreatedEventHandler
         }
     }
 
+    [MessageKey("Order.OrderCreatedEvent")]
     public record Event(Guid OrderId, Guid StoreId, Guid UserId, DateTime CreatedAt);
 }

@@ -62,5 +62,6 @@ public sealed class OrderCompletedEventHandler
         }
     }
 
+    [MessageKey("Order.OrderCompletedEvent")]
     public sealed record Event(Guid OrderId, Guid UserId, Guid StoreId, decimal Total);
 }
