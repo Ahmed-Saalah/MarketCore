@@ -202,7 +202,6 @@ public class CreateOrderTests
                             && e.UserId == request.UserId
                             && e.Items.Count == request.Items.Count
                         ),
-                        "Order.OrderCreatedEvent",
                         It.IsAny<CancellationToken>()
                     ),
                 Times.Once
