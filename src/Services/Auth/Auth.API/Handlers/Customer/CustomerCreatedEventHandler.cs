@@ -3,7 +3,7 @@ using Auth.API.Models;
 using Core.Messaging;
 using Microsoft.AspNetCore.Identity;
 
-namespace Auth.API.Handlers;
+namespace Auth.API.Handlers.Customer;
 
 public sealed class CustomerCreatedEventHandler
 {
