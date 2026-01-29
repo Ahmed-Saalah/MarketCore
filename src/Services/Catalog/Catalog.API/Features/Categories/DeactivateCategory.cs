@@ -45,7 +45,6 @@ public sealed class DeactivateCategory
                     RootCategoryId: request.Id,
                     AllDeactivatedCategoryIds: idsToDeactivate.ToList()
                 ),
-                routingKey: "catalog.category.deactivated",
                 cancellationToken
             );
 

@@ -41,7 +41,6 @@ public sealed class DeactivateProduct
 
             await eventPublisher.PublishAsync(
                 new ProductDeactivatedEvent(product.Id, DateTime.UtcNow),
-                "Catalog.ProductDeactivatedEvent",
                 cancellationToken
             );
 

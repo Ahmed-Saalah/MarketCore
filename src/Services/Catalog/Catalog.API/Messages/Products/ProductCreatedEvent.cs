@@ -1,5 +1,8 @@
-﻿namespace Catalog.API.Messages.Products;
+﻿using Core.Messaging;
 
+namespace Catalog.API.Messages.Products;
+
+[MessageKey("Catalog.ProductCreatedEvent")]
 public record ProductCreatedEvent(
     Guid ProductId,
     Guid StoreId,

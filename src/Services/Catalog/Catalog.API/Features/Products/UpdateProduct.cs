@@ -111,7 +111,6 @@ public sealed class UpdateProduct
                     product.Sku,
                     product.StoreId
                 ),
-                "Catalog.ProductUpdatedEvent",
                 cancellationToken
             );
 

@@ -1,5 +1,6 @@
 ﻿using Catalog.API.Data;
 using Catalog.API.Entities.Categories;
+using Catalog.API.Messages.Categories;
 using Core.Domain.Abstractions;
 using Core.Domain.Errors;
 using Core.Domain.Response;
@@ -55,7 +56,7 @@ public sealed class CreateCategory
             await dbContext.SaveChangesAsync(cancellationToken);
 
             await eventPublisher.PublishAsync(
-                new Messages.Categories.CategoryCreatedEvent(
+                new CategoryCreatedEvent(
                     category.Id,
                     category.Name,
                     category.Description,
@@ -64,7 +65,6 @@ public sealed class CreateCategory
                     category.ParentId,
                     category.CreatedAt
                 ),
-                routingKey: "Catalog.CategoryCreatedEvent",
                 cancellationToken
             );
 

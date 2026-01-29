@@ -41,7 +41,6 @@ public sealed class ActivateProduct
 
             await eventPublisher.PublishAsync(
                 new ProductActivatedEvent(product.Id, DateTime.UtcNow),
-                "Catalog.ProductActivatedEvent",
                 cancellationToken
             );
 

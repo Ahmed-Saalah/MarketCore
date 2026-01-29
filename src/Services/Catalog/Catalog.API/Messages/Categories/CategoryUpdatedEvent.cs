@@ -1,5 +1,8 @@
-﻿namespace Catalog.API.Messages.Categories;
+﻿using Core.Messaging;
 
+namespace Catalog.API.Messages.Categories;
+
+[MessageKey("Catalog.CategoryUpdatedEvent")]
 public sealed record CategoryUpdatedEvent(
     Guid Id,
     string Name,

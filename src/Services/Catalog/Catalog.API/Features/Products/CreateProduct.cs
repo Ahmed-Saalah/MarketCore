@@ -130,7 +130,6 @@ public sealed class CreateProduct
                     category.Name,
                     product.CreatedAt
                 ),
-                "Catalog.ProductCreatedEvent",
                 cancellationToken
             );
 
