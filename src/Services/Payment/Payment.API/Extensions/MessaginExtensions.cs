@@ -1,5 +1,4 @@
 ﻿using Core.Messaging;
-using Payment.API.Handler.Order;
 
 namespace Payment.API.Extensions;
 
@@ -11,15 +10,8 @@ public static class MessaginExtensions
     )
     {
         services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
-
         services.AddMessageBroker();
-        services.AddRabbitMqEventConsumer(
-            (
-                typeof(CreatePaymentCommandHandler.Command),
-                typeof(CreatePaymentCommandHandler.Handler),
-                "Order.CreatePaymentCommand"
-            )
-        );
+        services.AddRabbitMqEventConsumer(typeof(Program).Assembly);
         return services;
     }
 }

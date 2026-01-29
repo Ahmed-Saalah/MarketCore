@@ -8,8 +8,6 @@ namespace Payment.API.Handler.Order;
 
 public sealed class CreatePaymentCommandHandler
 {
-    public record Command(Guid OrderId, Guid UserId, decimal Amount, string Currency);
-
     public sealed class Handler(
         PaymentDbContext dbContext,
         IPaymentGateway paymentGateway,
@@ -20,10 +18,7 @@ public sealed class CreatePaymentCommandHandler
         private readonly IPaymentGateway _paymentGateway = paymentGateway;
         private readonly ILogger<Handler> _logger = logger;
 
-        public async Task HandleAsync(
-            Command command,
-            CancellationToken cancellationToken = default
-        )
+        public async Task HandleAsync(Command command, CancellationToken cancellationToken)
         {
             _logger.LogInformation(
                 "Initiating Payment Intent for Order {OrderId}",
@@ -95,4 +90,7 @@ public sealed class CreatePaymentCommandHandler
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
+
+    [MessageKey("Order.CreatePaymentCommand")]
+    public record Command(Guid OrderId, Guid UserId, decimal Amount, string Currency);
 }

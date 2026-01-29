@@ -85,7 +85,6 @@ public sealed class HandleStripeWebhook
 
             await _eventPublisher.PublishAsync(
                 new PaymentSucceededEvent(payment.OrderId, payment.Id, payment.Amount, intent.Id),
-                "Payment.PaymentSucceededEvent",
                 ct
             );
         }
@@ -108,7 +107,6 @@ public sealed class HandleStripeWebhook
 
             await _eventPublisher.PublishAsync(
                 new PaymentFailedEvent(payment.OrderId, payment.FailureMessage),
-                "Payment.PaymentFailedEvent",
                 ct
             );
         }
