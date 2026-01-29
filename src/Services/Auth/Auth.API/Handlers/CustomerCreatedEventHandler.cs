@@ -1,21 +1,12 @@
 ﻿using System.Security.Claims;
 using Auth.API.Models;
 using Core.Messaging;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 
 namespace Auth.API.Handlers;
 
 public sealed class CustomerCreatedEventHandler
 {
-    public sealed record Event(
-        Guid CustomerId,
-        int IdentityId,
-        string Email,
-        string DisplayName,
-        DateTime CreatedAt
-    ) : IRequest;
-
     public sealed class Handler(UserManager<User> userManager) : IEventHandler<Event>
     {
         public async Task HandleAsync(Event @event, CancellationToken cancellationToken = default)
@@ -35,4 +26,13 @@ public sealed class CustomerCreatedEventHandler
             }
         }
     }
+
+    [MessageKey("Customer.CustomerCreatedEvent")]
+    public sealed record Event(
+        Guid CustomerId,
+        int IdentityId,
+        string Email,
+        string DisplayName,
+        DateTime CreatedAt
+    );
 }

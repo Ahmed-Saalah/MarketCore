@@ -1,5 +1,4 @@
-﻿using Auth.API.Handlers;
-using Core.Messaging;
+﻿using Core.Messaging;
 
 namespace Auth.API.Extensions;
 
@@ -11,21 +10,8 @@ public static class MessagingExtensions
     )
     {
         services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
-
         services.AddMessageBroker();
-
-        services.AddRabbitMqEventConsumer(
-            (
-                typeof(StoreCreatedEventHandler.Event),
-                typeof(StoreCreatedEventHandler.Handler),
-                "Store.StoreCreatedEvent"
-            ),
-            (
-                typeof(CustomerCreatedEventHandler.Event),
-                typeof(CustomerCreatedEventHandler.Handler),
-                "Customer.CustomerCreatedEvent"
-            )
-        );
+        services.AddRabbitMqEventConsumer(typeof(Program).Assembly);
 
         return services;
     }

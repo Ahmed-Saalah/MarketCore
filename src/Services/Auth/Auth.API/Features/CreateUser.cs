@@ -159,7 +159,6 @@ public sealed class CreateUser
                     user.DisplayName,
                     request.Role
                 ),
-                "Auth.UserCreatedEvent",
                 cancellationToken
             );
 
