@@ -2,7 +2,7 @@
 using MediatR;
 using Store.API.Features;
 
-namespace Store.API.Handlers;
+namespace Store.API.Handlers.Auth;
 
 public class UserCreatedEventHandler
 {
