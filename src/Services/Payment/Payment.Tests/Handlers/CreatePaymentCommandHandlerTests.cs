@@ -48,7 +48,7 @@ public class CreatePaymentCommandHandlerTests
         await _dbContext.SaveChangesAsync();
 
         // Act
-        await _handler.HandleAsync(command);
+        await _handler.HandleAsync(command, It.IsAny<CancellationToken>());
 
         // Assert
         _paymentGatewayMock.Verify(
@@ -80,7 +80,7 @@ public class CreatePaymentCommandHandlerTests
         await _dbContext.SaveChangesAsync();
 
         // Act
-        await _handler.HandleAsync(command);
+        await _handler.HandleAsync(command, It.IsAny<CancellationToken>());
 
         // Assert
         _paymentGatewayMock.Verify(
@@ -116,7 +116,7 @@ public class CreatePaymentCommandHandlerTests
             );
 
         // Act
-        await _handler.HandleAsync(command);
+        await _handler.HandleAsync(command, It.IsAny<CancellationToken>());
 
         // Assert
         var payment = await _dbContext.Payments.FirstOrDefaultAsync(p =>
@@ -152,7 +152,7 @@ public class CreatePaymentCommandHandlerTests
             );
 
         // Act
-        await _handler.HandleAsync(command);
+        await _handler.HandleAsync(command, It.IsAny<CancellationToken>());
 
         // Assert
         var payment = await _dbContext.Payments.FirstOrDefaultAsync(p =>
