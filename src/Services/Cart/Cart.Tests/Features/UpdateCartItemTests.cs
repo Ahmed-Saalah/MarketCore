@@ -203,7 +203,6 @@ public class UpdateCartItemTests
                             && evt.ProductId == request.Dto.ProductId
                             && evt.Quantity == request.Dto.Quantity
                         ),
-                        It.IsAny<string>(),
                         It.IsAny<CancellationToken>()
                     ),
                 Times.Once

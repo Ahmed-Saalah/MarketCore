@@ -129,7 +129,6 @@ public class RemoveItemTests
                         It.Is<CartItemRemovedEvent>(e =>
                             e.CartId == cartId && e.ProductId == productId && e.Quantity == 5
                         ),
-                        It.IsAny<string>(),
                         It.IsAny<CancellationToken>()
                     ),
                 Times.Once

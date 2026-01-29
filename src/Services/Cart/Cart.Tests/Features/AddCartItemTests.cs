@@ -254,7 +254,6 @@ public class AddItemTests
                             e.ProductId == request.Item.ProductId
                             && e.Quantity == request.Item.Quantity
                         ),
-                        It.IsAny<string>(),
                         It.IsAny<CancellationToken>()
                     ),
                 Times.Once
