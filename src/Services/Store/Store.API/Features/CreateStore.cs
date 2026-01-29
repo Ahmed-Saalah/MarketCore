@@ -66,7 +66,6 @@ public sealed class CreateStore
                     OwnerEmail: newStore.OwnerEmail,
                     CreatedAt: newStore.CreatedAt
                 ),
-                routingKey: "Store.StoreCreatedEvent",
                 cancellationToken: cancellationToken
             );
         }

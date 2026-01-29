@@ -6,15 +6,6 @@ namespace Store.API.Handlers;
 
 public class UserCreatedEventHandler
 {
-    public sealed record Event(
-        int UserId,
-        string Username,
-        string Email,
-        string? PhoneNumber,
-        string DisplayName,
-        string? Role
-    );
-
     public class Handler(IMediator mediator) : IEventHandler<Event>
     {
         public async Task HandleAsync(Event @event, CancellationToken cancellationToken)
@@ -35,4 +26,14 @@ public class UserCreatedEventHandler
             await mediator.Send(command, cancellationToken);
         }
     }
+
+    [MessageKey("Auth.UserCreatedEvent")]
+    public sealed record Event(
+        int UserId,
+        string Username,
+        string Email,
+        string? PhoneNumber,
+        string DisplayName,
+        string? Role
+    );
 }

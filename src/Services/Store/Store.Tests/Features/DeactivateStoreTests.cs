@@ -79,7 +79,6 @@ public class DeactivateStoreTests
                         && e.OwnerIdentityId == userId
                         && e.StoreName == "Closing Shop"
                     ),
-                    "store.deactivated",
                     It.IsAny<CancellationToken>()
                 ),
             Times.Once
@@ -100,12 +99,7 @@ public class DeactivateStoreTests
         result.Error.Should().BeOfType<UnauthorizedError>();
 
         _eventPublisherMock.Verify(
-            x =>
-                x.PublishAsync(
-                    It.IsAny<object>(),
-                    It.IsAny<string>(),
-                    It.IsAny<CancellationToken>()
-                ),
+            x => x.PublishAsync(It.IsAny<object>(), It.IsAny<CancellationToken>()),
             Times.Never
         );
     }
@@ -124,12 +118,7 @@ public class DeactivateStoreTests
         result.Error.Should().BeOfType<NotFound>();
 
         _eventPublisherMock.Verify(
-            x =>
-                x.PublishAsync(
-                    It.IsAny<object>(),
-                    It.IsAny<string>(),
-                    It.IsAny<CancellationToken>()
-                ),
+            x => x.PublishAsync(It.IsAny<object>(), It.IsAny<CancellationToken>()),
             Times.Never
         );
     }

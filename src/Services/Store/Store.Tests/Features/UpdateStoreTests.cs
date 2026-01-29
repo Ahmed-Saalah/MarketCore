@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Core.Messaging;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ public class UpdateStoreTests
     private readonly StoreDbContext _dbContext;
     private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
     private readonly UpdateStore.Handler _handler;
+    private readonly Mock<IEventPublisher> _eventPublisherMock;
 
     public UpdateStoreTests()
     {
@@ -21,7 +23,12 @@ public class UpdateStoreTests
             .Options;
         _dbContext = new StoreDbContext(options);
         _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-        _handler = new UpdateStore.Handler(_dbContext, _httpContextAccessorMock.Object);
+        _eventPublisherMock = new Mock<IEventPublisher>();
+        _handler = new UpdateStore.Handler(
+            _dbContext,
+            _httpContextAccessorMock.Object,
+            _eventPublisherMock.Object
+        );
     }
 
     private void SetupUser(int identityId)

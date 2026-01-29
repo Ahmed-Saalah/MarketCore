@@ -58,7 +58,6 @@ public static class DeactivateStore
                     store.Name,
                     DateTime.UtcNow
                 ),
-                routingKey: "Store.StoreDeactivatedEvent",
                 cancellationToken
             );
 

@@ -2,11 +2,11 @@
 
 namespace Store.API.Messages;
 
-[MessageKey("Store.StoreCreatedEvent")]
-public sealed record StoreCreatedEvent(
+[MessageKey("Store.StoreUpdatedEvent")]
+public sealed record StoreUpdatedEvent(
     Guid StoreId,
     int OwnerIdentityId,
     string OwnerName,
     string OwnerEmail,
-    DateTime CreatedAt
+    DateTime UpdatedAt
 );

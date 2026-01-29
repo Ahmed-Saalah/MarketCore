@@ -2,10 +2,12 @@
 using Core.Domain.Abstractions;
 using Core.Domain.Errors;
 using Core.Domain.Response;
+using Core.Messaging;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Store.API.Data;
+using Store.API.Messages;
 
 namespace Store.API.Features;
 
@@ -23,8 +25,11 @@ public sealed class UpdateStore
         }
     }
 
-    public class Handler(StoreDbContext dbContext, IHttpContextAccessor httpContextAccessor)
-        : IRequestHandler<Request, Result<bool>>
+    public class Handler(
+        StoreDbContext dbContext,
+        IHttpContextAccessor httpContextAccessor,
+        IEventPublisher eventPublisher
+    ) : IRequestHandler<Request, Result<bool>>
     {
         public async Task<Result<bool>> Handle(Request request, CancellationToken cancellationToken)
         {
@@ -55,6 +60,17 @@ public sealed class UpdateStore
             store.CoverImageUrl = request.CoverImageUrl;
             store.UpdatedAt = DateTime.UtcNow;
             await dbContext.SaveChangesAsync(cancellationToken);
+
+            await eventPublisher.PublishAsync(
+                new StoreUpdatedEvent(
+                    StoreId: store.Id,
+                    OwnerIdentityId: store.OwnerIdentityId,
+                    OwnerName: store.OwnerName,
+                    OwnerEmail: store.OwnerEmail,
+                    UpdatedAt: store.CreatedAt
+                ),
+                cancellationToken
+            );
 
             return true;
         }

@@ -1,5 +1,8 @@
-﻿namespace Store.API.Messages;
+﻿using Core.Messaging;
 
+namespace Store.API.Messages;
+
+[MessageKey("Store.StoreDeactivatedEvent")]
 public sealed record StoreDeactivatedEvent(
     Guid StoreId,
     int OwnerIdentityId,
