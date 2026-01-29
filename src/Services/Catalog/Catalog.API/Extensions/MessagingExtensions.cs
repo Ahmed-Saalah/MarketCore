@@ -13,7 +13,6 @@ namespace Catalog.API.Extensions
                 configuration.GetSection(RabbitMqOptions.SectionName)
             );
             services.AddMessageBroker();
-            services.AddRabbitMqEventConsumer(typeof(Program).Assembly);
             return services;
         }
     }
