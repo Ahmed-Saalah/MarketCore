@@ -1,5 +1,6 @@
 ﻿using Core.Messaging;
 using Customer.API.Data;
+using Customer.API.Messages;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -56,14 +57,13 @@ public sealed class CreateCustomer
             await dbContext.SaveChangesAsync(cancellationToken);
 
             await eventPublisher.PublishAsync(
-                new Messages.CustomerCreatedEvent(
+                new CustomerCreatedEvent(
                     newCustomer.Id,
                     newCustomer.IdentityId,
                     newCustomer.Email,
                     newCustomer.DisplayName,
                     newCustomer.CreatedAt
                 ),
-                routingKey: "Customer.CustomerCreatedEvent",
                 cancellationToken
             );
         }
