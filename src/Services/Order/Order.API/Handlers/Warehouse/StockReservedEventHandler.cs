@@ -7,15 +7,13 @@ namespace Order.API.Handlers.Warehouse;
 
 public sealed class StockReservedEventHandler
 {
-    public sealed record Event(Guid OrderId, Guid StoreId);
-
     public sealed class Handler(
         OrderDbContext dbContext,
         IEventPublisher eventPublisher,
         ILogger<Handler> logger
     ) : IEventHandler<Event>
     {
-        public async Task HandleAsync(Event @event, CancellationToken cancellationToken = default)
+        public async Task HandleAsync(Event @event, CancellationToken cancellationToken)
         {
             var order = await dbContext.Orders.FindAsync(@event.OrderId);
             if (order == null)
@@ -33,9 +31,11 @@ public sealed class StockReservedEventHandler
 
             await eventPublisher.PublishAsync(
                 new CreatePaymentCommand(order.Id, order.UserId, order.Total, "USD"),
-                "Order.CreatePaymentCommand",
                 cancellationToken
             );
         }
     }
+
+    [MessageKey("Warehouse.StockReservedEvent")]
+    public sealed record Event(Guid OrderId, Guid StoreId);
 }

@@ -1,5 +1,4 @@
 ﻿using Core.Messaging;
-using Microsoft.EntityFrameworkCore;
 using Order.API.Constants;
 using Order.API.Data;
 
@@ -10,7 +9,7 @@ public sealed class StockReservationFailedEventHandler
     public sealed class Handler(OrderDbContext dbContext, ILogger<Handler> logger)
         : IEventHandler<Event>
     {
-        public async Task HandleAsync(Event @event, CancellationToken cancellationToken = default)
+        public async Task HandleAsync(Event @event, CancellationToken cancellationToken)
         {
             var order = await dbContext.Orders.FindAsync(@event.OrderId);
             if (order == null)
@@ -26,5 +25,6 @@ public sealed class StockReservationFailedEventHandler
         }
     }
 
+    [MessageKey("Warehouse.StockReservationFailedEvent")]
     public sealed record Event(Guid OrderId, Guid StoreId, string Reason);
 }

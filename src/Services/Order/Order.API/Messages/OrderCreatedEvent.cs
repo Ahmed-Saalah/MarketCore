@@ -1,5 +1,8 @@
-﻿namespace Order.API.Messages;
+﻿using Core.Messaging;
 
+namespace Order.API.Messages;
+
+[MessageKey("Order.OrderCreatedEvent")]
 public record OrderCreatedEvent(
     Guid OrderId,
     Guid StoreId,

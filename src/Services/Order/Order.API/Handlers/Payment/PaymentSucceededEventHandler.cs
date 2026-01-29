@@ -8,20 +8,13 @@ namespace Order.API.Handlers.Payment;
 
 public sealed class PaymentSucceededEventHandler
 {
-    public sealed record Event(
-        Guid OrderId,
-        Guid PaymentId,
-        decimal Amount,
-        string PaymentIntentId
-    );
-
     public sealed class Handler(
         OrderDbContext dbContext,
         IEventPublisher eventPublisher,
         ILogger<Handler> logger
     ) : IEventHandler<Event>
     {
-        public async Task HandleAsync(Event @event, CancellationToken cancellationToken = default)
+        public async Task HandleAsync(Event @event, CancellationToken cancellationToken)
         {
             logger.LogInformation(
                 "Payment Succeeded for Order {OrderId}. Finalizing...",
@@ -57,9 +50,16 @@ public sealed class PaymentSucceededEventHandler
                         .Items.Select(i => new OrderCompletedItemDto(i.ProductId, i.Quantity))
                         .ToList()
                 ),
-                "Order.OrderCompletedEvent",
                 cancellationToken
             );
         }
     }
+
+    [MessageKey("Payment.PaymentSucceededEvent")]
+    public sealed record Event(
+        Guid OrderId,
+        Guid PaymentId,
+        decimal Amount,
+        string PaymentIntentId
+    );
 }

@@ -8,15 +8,13 @@ namespace Order.API.Handlers.Payment;
 
 public sealed class PaymentFailedEventHandler
 {
-    public sealed record Event(Guid OrderId, string Reason);
-
     public sealed class Handler(
         OrderDbContext dbContext,
         IEventPublisher eventPublisher,
         ILogger<Handler> logger
     ) : IEventHandler<Event>
     {
-        public async Task HandleAsync(Event @event, CancellationToken cancellationToken = default)
+        public async Task HandleAsync(Event @event, CancellationToken cancellationToken)
         {
             logger.LogWarning(
                 "Payment Failed for Order {OrderId}. Reason: {Reason}",
@@ -57,9 +55,11 @@ public sealed class PaymentFailedEventHandler
                         .Items.Select(i => new OrderCanceledItemDto(i.ProductId, i.Quantity))
                         .ToList()
                 ),
-                "Order.OrderCanceledEvent",
                 cancellationToken
             );
         }
     }
+
+    [MessageKey("Payment.PaymentFailedEvent")]
+    public sealed record Event(Guid OrderId, string Reason);
 }

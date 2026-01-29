@@ -1,5 +1,8 @@
-﻿namespace Order.API.Messages;
+﻿using Core.Messaging;
 
+namespace Order.API.Messages;
+
+[MessageKey("Order.OrderCanceledEvent")]
 public sealed record OrderCanceledEvent(
     Guid OrderId,
     Guid UserId,

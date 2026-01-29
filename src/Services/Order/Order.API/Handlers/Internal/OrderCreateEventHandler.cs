@@ -7,10 +7,7 @@ public sealed class OrderCreateEventHandler
 {
     public sealed class Handler(IEventPublisher commandPublisher) : IEventHandler<OrderCreatedEvent>
     {
-        public async Task HandleAsync(
-            OrderCreatedEvent @event,
-            CancellationToken cancellationToken = default
-        )
+        public async Task HandleAsync(OrderCreatedEvent @event, CancellationToken cancellationToken)
         {
             await commandPublisher.PublishAsync(
                 new ReserveStockCommand(
@@ -18,13 +15,8 @@ public sealed class OrderCreateEventHandler
                     @event.StoreId,
                     @event.Items.Select(i => new OrderItemDto(i.ProductId, i.Quantity)).ToList()
                 ),
-                "Order.ReserveStockCommand",
                 cancellationToken
             );
         }
     }
-
-    public record ReserveStockCommand(Guid OrderId, Guid StoreId, List<OrderItemDto> Items);
-
-    public record OrderItemDto(Guid ProductId, int Quantity);
 }

@@ -112,7 +112,6 @@ public sealed class CreateOrder
                     order.Items.Select(i => new OrderCreatedItem(i.ProductId, i.Quantity)).ToList(),
                     order.CreatedAt
                 ),
-                "Order.OrderCreatedEvent",
                 cancellationToken
             );
 

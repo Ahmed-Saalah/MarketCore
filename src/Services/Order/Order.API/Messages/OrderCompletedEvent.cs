@@ -1,5 +1,8 @@
-﻿namespace Order.API.Messages;
+﻿using Core.Messaging;
 
+namespace Order.API.Messages;
+
+[MessageKey("Order.OrderCompletedEvent")]
 public sealed record OrderCompletedEvent(
     Guid OrderId,
     Guid UserId,
