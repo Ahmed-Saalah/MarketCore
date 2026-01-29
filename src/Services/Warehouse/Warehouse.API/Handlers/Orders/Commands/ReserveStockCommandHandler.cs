@@ -7,10 +7,6 @@ namespace Warehouse.API.Handlers.Orders.Commands;
 
 public sealed class ReserveStockCommandHandler
 {
-    public sealed record Command(Guid OrderId, Guid StoreId, List<OrderItemDto> Items);
-
-    public sealed record OrderItemDto(Guid ProductId, int Quantity);
-
     public sealed class Handler(
         WarehouseDbContext dbContext,
         IEventPublisher eventPublisher,
@@ -54,7 +50,6 @@ public sealed class ReserveStockCommandHandler
 
                 await eventPublisher.PublishAsync(
                     new StockReservedEvent(command.OrderId, command.StoreId),
-                    "Warehouse.StockReservedEvent",
                     cancellationToken
                 );
             }
@@ -78,10 +73,14 @@ public sealed class ReserveStockCommandHandler
                         ex.Message,
                         command.Items.Select(i => new Item(i.ProductId, i.Quantity)).ToList()
                     ),
-                    "Warehouse.StockReservationFailedEvent",
                     cancellationToken
                 );
             }
         }
     }
+
+    [MessageKey("Order.ReserveStockCommand")]
+    public sealed record Command(Guid OrderId, Guid StoreId, List<OrderItemDto> Items);
+
+    public sealed record OrderItemDto(Guid ProductId, int Quantity);
 }

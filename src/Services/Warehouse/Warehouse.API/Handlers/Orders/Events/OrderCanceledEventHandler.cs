@@ -1,7 +1,6 @@
 ﻿using Core.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Warehouse.API.Data;
-using Warehouse.API.Entities;
 
 namespace Warehouse.API.Handlers.Orders.Events;
 
@@ -30,6 +29,7 @@ public sealed class OrderCanceledEventHandler
         }
     }
 
+    [MessageKey("Order.OrderCanceledEvent")]
     public sealed record Event(
         Guid OrderId,
         Guid UserId,

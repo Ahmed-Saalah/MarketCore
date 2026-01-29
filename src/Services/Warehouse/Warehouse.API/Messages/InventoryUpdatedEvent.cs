@@ -1,5 +1,8 @@
-﻿namespace Warehouse.API.Messages;
+﻿using Core.Messaging;
 
+namespace Warehouse.API.Messages;
+
+[MessageKey("Warehouse.InventoryUpdatedEvent")]
 public sealed record InventoryUpdatedEvent(
     Guid InventoryId,
     Guid ProductId,

@@ -1,6 +1,5 @@
 ﻿using Core.Messaging;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Warehouse.API.Data;
 using Warehouse.API.Entities;
 using Warehouse.API.Messages;
@@ -47,7 +46,6 @@ public sealed class OrderCompletedEventHandler
                                 inventory.Id,
                                 DateTime.UtcNow
                             ),
-                            "Warehouse.ProductOutOfStockEvent",
                             cancellationToken
                         );
                     }
@@ -64,7 +62,6 @@ public sealed class OrderCompletedEventHandler
                                 inventory.Id,
                                 DateTime.UtcNow
                             ),
-                            "Warehouse.ProductLowStockEvent",
                             cancellationToken
                         );
                     }
@@ -76,6 +73,7 @@ public sealed class OrderCompletedEventHandler
         }
     }
 
+    [MessageKey("Order.OrderCompletedEvent")]
     public sealed record Event(
         Guid OrderId,
         Guid UserId,

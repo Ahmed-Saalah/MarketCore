@@ -102,7 +102,6 @@ public sealed class ReceiveStock
                     ReferenceNumber: request.ReferenceNumber,
                     OccurredOn: now
                 ),
-                "Warehouse.InventoryUpdatedEvent",
                 ct
             );
 
@@ -115,7 +114,6 @@ public sealed class ReceiveStock
                         InventoryId: inventory.Id,
                         Timestamp: now
                     ),
-                    "Warehouse.ProductBackInStockEvent",
                     ct
                 );
             }

@@ -1,7 +1,4 @@
 ﻿using Core.Messaging;
-using Warehouse.API.Handlers.Orders.Commands;
-using Warehouse.API.Handlers.Orders.Events;
-using Warehouse.API.Handlers.Products;
 
 namespace Warehouse.API.Extensions;
 
@@ -13,36 +10,8 @@ public static class MessagingExtensions
     )
     {
         services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
-
         services.AddMessageBroker();
-
-        services.AddRabbitMqEventConsumer(
-            (
-                typeof(ProductCreatedEventHandler.Event),
-                typeof(ProductCreatedEventHandler.Handler),
-                "Catalog.ProductCreatedEvent"
-            ),
-            (
-                typeof(ProductUpdatedEventHandler.Event),
-                typeof(ProductUpdatedEventHandler.Handler),
-                "Catalog.ProductUpdatedEvent"
-            ),
-            (
-                typeof(ReserveStockCommandHandler.Command),
-                typeof(ReserveStockCommandHandler.Handler),
-                "Order.ReserveStockCommand"
-            ),
-            (
-                typeof(OrderCompletedEventHandler.Event),
-                typeof(OrderCompletedEventHandler.Handler),
-                "Order.OrderCompletedEvent"
-            ),
-            (
-                typeof(OrderCanceledEventHandler.Event),
-                typeof(OrderCanceledEventHandler.Handler),
-                "Order.OrderCanceledEventHandler"
-            )
-        );
+        services.AddRabbitMqEventConsumer(typeof(Program).Assembly);
 
         return services;
     }

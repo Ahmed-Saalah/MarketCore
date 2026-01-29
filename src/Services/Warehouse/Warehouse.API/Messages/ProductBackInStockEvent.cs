@@ -1,5 +1,8 @@
-﻿namespace Warehouse.API.Messages;
+﻿using Core.Messaging;
 
+namespace Warehouse.API.Messages;
+
+[MessageKey("Warehouse.ProductBackInStockEvent")]
 public sealed record ProductBackInStockEvent(
     Guid ProductId,
     Guid StoreId,
