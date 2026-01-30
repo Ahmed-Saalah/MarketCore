@@ -23,7 +23,12 @@ The system follows a strict **Event-Driven Architecture** combined with the **Da
 * **API Gateway (YARP)**
 
 ### Building Blocks
-* **Core.Messaging**: A custom abstraction over MassTransit that standardizes event publishing, consumer registration, and routing conventions.
+
+* **Core.Messaging**: A robust Event Bus abstraction built on top of the native RabbitMQ Client. It implements standard enterprise patterns including:
+  * **Convention-Based Routing**: Uses custom attributes (`[MessageKey]`) to bind routing keys directly to message contracts.
+  * **Auto-Discovery**: Uses Reflection and Assembly Scanning to automatically register consumers and handlers.
+  * **Resilience**: Includes automated connection retries and dead-letter handling strategies.
+
 * **Core.Domain**: A shared library containing the Result pattern and standardized Domain Errors for consistent error handling across services.
 ---
 
@@ -31,7 +36,7 @@ The system follows a strict **Event-Driven Architecture** combined with the **Da
 
 * **Framework:** ASP.NET Core Web API (.NET 9)
 * **Database:** PostgreSQL (Entity Framework Core)
-* **Messaging:** RabbitMQ (MassTransit / Custom Wrapper)
+* **Messaging:** RabbitMQ (RabbitMQ.Client / Custom Event Bus)
 * **Caching:** Redis (Distributed Caching)
 * **Search Engine:** Elasticsearch (Full-text Search, Suggestions, & Faceting)
 * **Gateway**: YARP (Yet Another Reverse Proxy)
@@ -45,6 +50,7 @@ The system follows a strict **Event-Driven Architecture** combined with the **Da
 
 | Service | Responsibility |
 |------|---------------|
+| **API Gateway** |	Unified entry point (YARP) handling routing, rate limiting, and health checks |
 | **Auth Service** | Authentication, authorization, JWT handling |
 | **Customer Service** | Customer profiles, preferences, identity data |
 | **Store Service** | Store management and ownership |
@@ -96,9 +102,13 @@ dotnet test
 
 4. Access the Application:
    
-   APIs: Accessible via localhost ports (e.g., Catalog: 5004, Cart: 5005, Search: 5008)
+   **API Gateway (Single Entry Point): http://localhost:5000**
+   
+   Direct Service Access (Dev Mode):
+   * Catalog: http://localhost:5004
+   * Cart: http://localhost:5005
+   * Search: http://localhost:5008
 
-   Kibana (Search Dashboard): http://localhost:5601
-
-   RabbitMQ Dashboard: http://localhost:15672
+   Kibana: http://localhost:5601    
+   RabbitMQ: http://localhost:15672
 
