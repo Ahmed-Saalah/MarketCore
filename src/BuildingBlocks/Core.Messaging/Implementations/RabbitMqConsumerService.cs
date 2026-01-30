@@ -10,16 +10,16 @@ namespace Core.Messaging.Implementations;
 
 public class RabbitMqConsumerService : BackgroundService
 {
-    private readonly ILogger<RabbitMqConsumerService> _logger;
-    private readonly IServiceProvider _serviceProvider;
     private readonly string _hostName;
     private readonly string _userName;
     private readonly string _password;
     private readonly string _exchangeName;
     private readonly string _queueName;
-    private readonly Dictionary<string, Type> _routingKeyEventMap;
     private IConnection? _connection;
     private IChannel? _channel;
+    private readonly Dictionary<string, Type> _routingKeyEventMap;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<RabbitMqConsumerService> _logger;
 
     public RabbitMqConsumerService(
         ILogger<RabbitMqConsumerService> logger,
@@ -69,10 +69,9 @@ public class RabbitMqConsumerService : BackgroundService
             {
                 _logger.LogWarning(
                     ex,
-                    "Attempt {Attempt}/{MaxRetries} failed to connect to RabbitMQ. Retrying in {Delay}...",
+                    "Attempt {Attempt}/{MaxRetries} failed to connect. Retrying...",
                     attempt,
-                    maxRetries,
-                    delay
+                    maxRetries
                 );
 
                 if (attempt == maxRetries)
@@ -82,12 +81,47 @@ public class RabbitMqConsumerService : BackgroundService
             }
         }
 
-        await _channel.ExchangeDeclareAsync(_exchangeName, ExchangeType.Topic, durable: true);
+        var dlxName = $"{_queueName}.dlx";
+        var dlqName = $"{_queueName}.dlq";
+
+        await _channel.ExchangeDeclareAsync(
+            dlxName,
+            ExchangeType.Fanout,
+            durable: true,
+            cancellationToken: cancellationToken
+        );
+
+        await _channel.QueueDeclareAsync(
+            dlqName,
+            durable: true,
+            exclusive: false,
+            autoDelete: false,
+            cancellationToken: cancellationToken
+        );
+
+        await _channel.QueueBindAsync(
+            dlqName,
+            dlxName,
+            string.Empty,
+            cancellationToken: cancellationToken
+        );
+
+        await _channel.ExchangeDeclareAsync(
+            _exchangeName,
+            ExchangeType.Topic,
+            durable: true,
+            cancellationToken: cancellationToken
+        );
+
+        var args = new Dictionary<string, object?> { { "x-dead-letter-exchange", dlxName } };
+
         await _channel.QueueDeclareAsync(
             _queueName,
             durable: true,
             exclusive: false,
-            autoDelete: false
+            autoDelete: false,
+            arguments: args,
+            cancellationToken: cancellationToken
         );
 
         foreach (var routingKey in _routingKeyEventMap.Keys)
@@ -101,9 +135,9 @@ public class RabbitMqConsumerService : BackgroundService
         }
 
         _logger.LogInformation(
-            "RabbitMQ Consumer started on queue {Queue}. Listening to {Count} events.",
+            "RabbitMQ Consumer started. Queue: {Queue}, DLQ: {DLQ}",
             _queueName,
-            _routingKeyEventMap.Count
+            dlqName
         );
 
         await base.StartAsync(cancellationToken);
@@ -147,10 +181,22 @@ public class RabbitMqConsumerService : BackgroundService
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error processing message");
-                await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
+                await _channel.BasicNackAsync(ea.DeliveryTag, multiple: false, requeue: false);
             }
         };
 
-        return _channel.BasicConsumeAsync(queue: _queueName, autoAck: false, consumer: consumer);
+        return _channel.BasicConsumeAsync(
+            queue: _queueName,
+            autoAck: false,
+            consumer: consumer,
+            cancellationToken: stoppingToken
+        );
+    }
+
+    public override void Dispose()
+    {
+        _channel?.Dispose();
+        _connection?.Dispose();
+        base.Dispose();
     }
 }
